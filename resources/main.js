@@ -31,7 +31,8 @@ function GameModel(){
   this.clickable = true;
   this.turn = 1;
   this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-  this.questionsLeft = 10; //tracks the number of
+  this.questionsLeft = 10; //tracks the number of questions asked
+  this.questions = {};
   this.players = {
     //1 : Player {}
     //2 : Player {}
@@ -249,24 +250,23 @@ function Controller(model,view){
               console.log('error input');
           }
       });
-
-      this.checkWinState = function(){
-        if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
-          model.clickable = false;
-          model.gameState = 'endgame';
-          view.showEndgameWinner();
-        }
-      }
   }
 
-  this.retrieveQuestions = function(diff,categoryID,player){
-    console.log('receive questions');
+  this.checkWinState = function(){
+    if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
+      model.clickable = false;
+      model.gameState = 'endgame';
+      view.showEndgameWinner();
+    }
+  }
+
+
+  this.retrieveQuestions = function(diff){
       $.ajax({
           method: 'GET',
           dataType: 'JSON',
           data:{
-              'amount': 10,
-              category: categoryID,
+              'amount': 50,
               difficulty: diff,
               type: 'multiple',
               token: model.token
@@ -274,10 +274,10 @@ function Controller(model,view){
           url: 'https://opentdb.com/api.php',
           success: function(data){
              if(data.response_code===0){
-                 model.players[player]['questions'][diff] = data.results;
-                 console.log('finished ' + player + ' ' + diff);
+                 model.questions[diff] = data.results;
+                 console.log('finished ' + diff);
              } else {
-               alert('Issue with question retrieval. Response code: ' + data.responsecode);
+               alert('Issue with question retrieval. Response code: ' + data.response_code);
              }
           },
           error: function(){
@@ -289,11 +289,10 @@ function Controller(model,view){
   this.buildQuestionShoe = function(){
     console.log('build shoe');
     var difficulty = ['easy','medium','hard'];
-    for (player in model.players){
-      difficulty.forEach((element)=>{
-        this.retrieveQuestions(element,model.players[player]['categoryID'],player);
-      });
-    }
+
+    difficulty.forEach((element)=>{
+      this.retrieveQuestions(element);
+    });
   }
 
   this.getQuote = function(winner){
