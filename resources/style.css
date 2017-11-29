@@ -21,7 +21,7 @@ body {
 .modalContainer {
     height: 100vh;
     width: 100vw;
-    display: none;
+    /*display: none;*/
 }
 
 .playerContainer {
@@ -70,17 +70,82 @@ body {
     float: left;
 }
 
+.playerAvatar:hover {
+    box-shadow: 0 0 20px red;
+}
+
 .playButton {
     width: 100%;
     height: 100%;
+    font-family: ss4;
+    font-size: 3em;
 }
+
+#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wolverine, #robin, #nightcrawler, #superman, #thething {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+#ironman {
+    background-image: url('images/avatars/ironman.jpg');
+}
+
+#libertybell {
+    background-image: url('images/avatars/liberty-belle.jpg');
+}
+
+#batman {
+    background-image: url('images/avatars/batman.jpg');
+}
+
+#juggernaut {
+    background-image: url('images/avatars/juggernaut.jpg');
+}
+
+#mrfantastic {
+    background-image: url('images/avatars/mr-fantastic.jpg');
+}
+
+#mrsinister {
+    background-image: url('images/avatars/mr-sinister.jpg');
+}
+
+#thor {
+    background-image: url('images/avatars/thor.jpg');
+}
+
+#wolverine {
+    background-image: url('images/avatars/wolverine.jpg');
+}
+
+#robin {
+    background-image: url('images/avatars/robin.jpg');
+}
+
+#nightcrawler {
+    background-image: url('images/avatars/nightcrawler.jpg');
+}
+
+#superman {
+    background-image: url('images/avatars/superman.jpg');
+}
+
+#thething {
+    background-image: url('images/avatars/thing.jpg');
+}
+
+
+
+
+
 
 /************************** gameboard ****************************/
 
 .gameBoard {
     height: 100vh;
     width: 100vw;
-    /*display: none;*/
+    display: none;
 }
 
 .hitPoints {
@@ -231,8 +296,4 @@ body {
     width: 100%;
     height: 25px;
 
-<<<<<<< HEAD
-/*************************** winner modal **************************/
-=======
-}
->>>>>>> 9707eca4a9ca38e6964718820bf4baea5d91d0bc
+
