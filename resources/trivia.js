@@ -1,27 +1,56 @@
+//prototype for calling questions
+
 $(document).ready(init);
 
-
+var trivia;
 function init(){
-    var trivia = new TriviaDB();
+    trivia = new TriviaDB();
+    TriviaCall(trivia);
 }
 
-function TriviaDB(){
+function TriviaDB(player){ //takes in the player object and populates the variables based on players properties
+    this.questionAmount = null;
+    this.categoryID = null;
+    this.difficulty = null;
+    this.questionType = null;
     this.easyQuestionArr = [];
-    this.easyQuestionData= {};
     this.mediumQuestionArr = [];
-    this.mediumQuestionData= {};
     this.hardQuestionArr = [];
-    this.hardQuestionData= {};
-    this.
+    this.retrieveQuestions = function(){
+        $.ajax({
+            method: 'GET',
+            dataType: 'JSON',
+            data:{
+                'amount': this.questionAmount,
+                category: this.categoryID,
+                difficulty: this.difficulty,
+                type: this.questionType,
+                token:
+            },
+            url: 'https://opentdb.com/api.php',
+            success: function(data){
+               if(data.response_code===0){
+                   return data
+               }
+            },
+            error: function(){
+                console.log('error input')
+            }
+        });//end of ajaxCall
+    }
 }
 
-function TriviaCall (database){
+function getSessionToken(){
     $.ajax({
         method: 'GET',
         dataType: 'JSON',
-        url: 'https://opentdb.com/api.php?amount=1&category=12&difficulty=easy&type=multiple',
+        url: 'https://opentdb.com/api_token.php?command=request',
         success: function(data){
-            console.log(data);
+           if(data.response_code ===0 ){
+              return data.token
+           }else{
+               console.error('server response'+ data.response_code +" "+data.response_message)
+           }
         },
         error: function(){
             console.log('error input')
