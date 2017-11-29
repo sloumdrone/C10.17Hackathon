@@ -1,17 +1,18 @@
-$(document).ready(initialize);
+var game = new GameModel();
+
+$(document).ready(initialize)
 
 function initialize(){
-  var game = new GameModel();
   var view = new View(game);
   var controller = new Controller(game);
-  addClickHandlers();
+  addClickHandlers(game);
 }
 
 function addClickHandlers(){
     $('.playerAvatar').click(function(){
       if (game.clickable){
         var characterSelection = $(event.target).attr('id');
-        game.addCharacter(game.availableCharacters[characterSelection]);
+        game.addPlayer(characterSelection);
       }
     });
 }
@@ -131,7 +132,7 @@ function GameModel(){
 function Player(characterSelection){
   this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
   this.character = game.availableCharacters[characterSelection];
-  this.trivia = {} //object of arrays of objects
+  this.trivia = {}; //object of arrays of objects
 
   this.getWinQuote = function(characterName){
     //calls chuck norris api
