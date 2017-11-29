@@ -86,7 +86,7 @@ function Player(characterSelection){
 
 function View(model){
   //all of our functions for updating the view will go here
-  this.showEndgameWinner = function(){
+    this.showEndgameWinner = function(){
     var winner;
     if (model.players['1']['hitPoints'] > 0){
       winner = model.players['1']['name'];
