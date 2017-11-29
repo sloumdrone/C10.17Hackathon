@@ -37,8 +37,6 @@ function GameModel(){
     }
   }
 
-
-
   this.availableCharacters = {
     'superman' : {
       name: 'Superman',
@@ -124,7 +122,7 @@ function GameModel(){
       this.clickable = false;
       //display loading screen
       //gather trivia questions based on characters
-      //when done, load funciton will trigger ready state
+      //when done, load function will trigger ready state
     }
   }
 }
