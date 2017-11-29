@@ -16,10 +16,10 @@ function initialize(){
 
 function addClickHandlers(game, view, player){
     $('.playerAvatar').click(function(){
-      if (game.clickable){
+      if (game.avatarClickable){
         var characterSelection = $(event.target).attr('id');
         game.addPlayer(characterSelection);
-        // view.addOutlineToSelectedPlayer();
+        view.addOutlineToSelectedPlayer();
       }
     });
 }
@@ -27,7 +27,8 @@ function addClickHandlers(game, view, player){
 
 function GameModel(){
   this.gameState = 'playerSelection'; //playerSelection, loading, trivia, ready, endgame
-  this.clickable = true;
+  this.avatarClickable = true;
+  this.playButtonClickable = false;
   this.turn = 1;
   this.roundTime = 60; //just a starting number, tracks amount of time left in round;
   this.questionsLeft = 10; //tracks the number of
@@ -131,7 +132,8 @@ function GameModel(){
       this.turn = 2;
     } else {
       this.gameState = 'loading';
-      this.clickable = false;
+      this.avatarClickable = false;
+      view.activePlayButton();
       //display loading screen
       //gather trivia questions based on characters
       //when done, load function will trigger ready state
@@ -156,8 +158,9 @@ function Player(characterSelection, game){
 
 
 function View(model){
-  //all of our functions for updating the view will go here
-  this.showEndgameWinner = function(){
+    //all of our functions for updating the view will go here
+
+    this.showEndgameWinner = function(){
     var winner;
     if (model.players['1']['hitPoints'] > 0){
       winner = model.players['1']['name'];
@@ -172,28 +175,41 @@ function View(model){
     //wait a few seconds
     //add the win quote for the character to the win modal
     //show the win modal
-
-  }
+    }
 
     var controller = null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
     }
-  //
-  // this.addOutlineToSelectedPlayer = function(){
-  //     $(this).addClass('playerAvatarClicked');
-  //     console.log(this);
-  // }
+
+    this.addOutlineToSelectedPlayer = function(){
+      $(event.target).addClass('playerAvatarClicked');
+    }
+
+    this.activePlayButton = function(){
+        model.playButtonClickable = true;
+        $('.playButton').click(function(){
+            if(model.playButtonClickable) {
+                console.log('start game');
+                // add function that triggers game start/load screen
+                model.playButtonClickable = false;
+            }
+        })
+    }
+
+    $("#ironman").hover(function() {
+        $('.playerPhotoLarge').
+    })
 
 }
 
 
 function Controller(model,view){
   this.dealDamage = function(amount){
-    model.turn === 1
-    ? model.players[model.turn + 1]['hitPoints'] -= amount
-    : model.players[model.turn - 1]['hitPoints'] -= amount;
+    model.turn === 1  //condition
+    ? model.players[model.turn + 1]['hitPoints'] -= amount  //do if true
+    : model.players[model.turn - 1]['hitPoints'] -= amount;  //do if false
   }
 
     var view = null;
@@ -224,7 +240,7 @@ function Controller(model,view){
 
       this.checkWinState = function(){
         if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
-          model.clickable = false;
+          model.avatarClickable = false;
           model.gameState = 'endgame';
           view.showEndgameWinner();
         }
