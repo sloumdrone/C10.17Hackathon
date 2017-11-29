@@ -1,10 +1,11 @@
-var game = new GameModel();
+
 
 $(document).ready(initialize)
 
 function initialize(){
+  var game = new GameModel();
   var view = new View(game);
-  var controller = new Controller(game);
+  var controller = new Controller(game,view);
 
   controller.getQuote();
 
@@ -34,13 +35,7 @@ function GameModel(){
     //built using the add
   }
 
-  this.checkWinState = function(){
-    if (this.players['1']['hitPoints'] <= 0 || this.players['2']['hitPoints'] <= 0){
-      this.clickable = false;
-      this.gameState = 'endgame';
-      view.showEndgameWinner();
-    }
-  }
+
 
   this.availableCharacters = {
     'superman' : {
@@ -170,7 +165,7 @@ function View(model){
 }
 
 
-function Controller(model){
+function Controller(model,view){
   this.dealDamage = function(amount){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
@@ -196,6 +191,14 @@ function Controller(model){
               console.log('error input');
           }
       });
+
+      this.checkWinState = function(){
+        if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
+          model.clickable = false;
+          model.gameState = 'endgame';
+          view.showEndgameWinner();
+        }
+      }
   }
 
   this.retrieveQuestions = function(diff,categoryID,player){
