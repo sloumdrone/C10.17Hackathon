@@ -40,18 +40,78 @@ function GameModel(){
 
 
   this.availableCharacters = {
-    'superman' : {name: 'Superman', img: 'superman.png', category: ''},
-    'libertybelle' : {name: 'Liberty Belle', img: 'liberty-belle.png', category: ''},
-    'thething' : {name: 'The Thing', img: 'thing.png', category: ''},
-    'mrfantastic' : {name: 'Mr. Fantastic', img: 'mr-fantastic.png', category: ''},
-    'batman' : {name: 'Batman', img: 'batman.png', category: ''},
-    'ironman' : {name: 'Iron Man', img: 'iron-man.png', category: ''},
-    'thor' : {name: 'Thor', img: 'thor.png', category: ''},
-    'nightcrawler' : {name: 'Nightcrawler', img: 'nightcrawler.png', category: ''},
-    'wolverine' : {name: 'Wolverine', img: 'wolverine.png', category: ''},
-    'juggernaut' : {name: 'Juggernaut', img: 'juggernaut.png', category: ''},
-    'mrsinister' : {name: 'Mr. Sinister', img: 'mr-sinister.png', category: ''},
-    'robin' : {name: 'Robin', img: 'robin.png', category: ''}
+    'superman' : {
+      name: 'Superman',
+      img: 'superman.png',
+      category: 'General Knowledge',
+      categoryID: '9'
+    },
+    'libertybelle' : {
+      name: 'Liberty Belle',
+      img: 'liberty-belle.png',
+      category: 'Math',
+      categoryID: '19'
+    },
+    'thething' : {
+      name: 'The Thing',
+      img: 'thing.png',
+      category: 'Computers',
+      categoryID: '18'
+    },
+    'mrfantastic' : {
+      name: 'Mr. Fantastic',
+      img: 'mr-fantastic.png',
+      category: 'Computers',
+      categoryID: '18'
+    },
+    'batman' : {
+      name: 'Batman',
+      img: 'batman.png',
+      category: 'Gadgets',
+      categoryID: '9'
+    },
+    'ironman' : {
+      name: 'Iron Man',
+      img: 'iron-man.png',
+      category: 'Vehicles',
+      categoryID: '28'
+    },
+    'thor' : {
+      name: 'Thor',
+      img: 'thor.png',
+      category: 'Mythology',
+      categoryID: '20'
+    },
+    'nightcrawler' : {
+      name: 'Nightcrawler',
+      img: 'nightcrawler.png',
+      category: 'Video Games',
+      categoryID: '15'
+    },
+    'wolverine' : {
+      name: 'Wolverine',
+      img: 'wolverine.png',
+      category: 'Animals',
+      categoryID: '27'
+    },
+    'juggernaut' : {
+      name: 'Juggernaut',
+      img: 'juggernaut.png',
+      category: 'Sports',
+      categoryID: '21'
+    },
+    'mrsinister' : {
+      name: 'Mr. Sinister',
+      img: 'mr-sinister.png',
+      category: 'History',
+      categoryID: '23'
+    },
+    'robin' : {
+      name: 'Robin',
+      img: 'robin.png',
+      category: 'Comics',
+      categoryID: '29'
+    }
   }
 
   this.addPlayer = function(character){
@@ -80,6 +140,8 @@ function Player(characterSelection){
     //replaces chuck norris with character characterName
     //returns info
   }
+
+
 }
 
 
@@ -102,7 +164,7 @@ function View(model){
 }
 
 
-function controller(model){
+function Controller(model){
   this.dealDamage = function(amount){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
@@ -128,6 +190,44 @@ function controller(model){
               console.log('error input');
           }
       });
+  }
+
+  this.retrieveQuestions = function(diff,categoryID,player){
+    console.log('recieve questions');
+      $.ajax({
+          method: 'GET',
+          dataType: 'JSON',
+          data:{
+              'amount': 10,
+              category: categoryID,
+              difficulty: diff,
+              type: 'multiple',
+              token: model.token
+          },
+          url: 'https://opentdb.com/api.php',
+          success: function(data){
+             if(data.response_code===0){
+                 model.players[player]['questions'][diff] = data.results;
+                 console.log('finished ' + player + ' ' + diff);
+             } else {
+               alert('Issue with question retrieval. Response code: ' + data.responsecode);
+             }
+          },
+          error: function(){
+              console.log('error input')
+          }
+      });
+  }
+
+  this.buildQuestionShoe = function(){
+    console.log('build shoe');
+    var difficulty = ['easy','medium','hard'];
+    for (player in model.players){
+      difficulty.forEach((element)=>{
+        this.retrieveQuestions(element,model.players[player]['categoryID'],player);
+      });
+    }
+
   }
 
 }

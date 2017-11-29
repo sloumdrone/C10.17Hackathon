@@ -5,17 +5,16 @@ $(document).ready(init);
 var trivia;
 function init(){
     trivia = new TriviaDB();
-    TriviaCall(trivia);
 }
 
 function TriviaDB(player){ //takes in the player object and populates the variables based on players properties
-    this.questionAmount = null;
-    this.categoryID = null;
-    this.difficulty = null;
-    this.questionType = null;
-    this.easyQuestionArr = [];
-    this.mediumQuestionArr = [];
-    this.hardQuestionArr = [];
+    this.questionAmount = 10;
+    this.categoryID = player.category;
+    this.difficulty = ['easy','medium','hard'];
+    this.questionType = 'multiple';
+    this.easyQuestions = [];
+    this.mediumQuestions = [];
+    this.hardQuestions = [];
     this.retrieveQuestions = function(){
         $.ajax({
             method: 'GET',
@@ -25,7 +24,7 @@ function TriviaDB(player){ //takes in the player object and populates the variab
                 category: this.categoryID,
                 difficulty: this.difficulty,
                 type: this.questionType,
-                token:
+                token: game.token
             },
             url: 'https://opentdb.com/api.php',
             success: function(data){
