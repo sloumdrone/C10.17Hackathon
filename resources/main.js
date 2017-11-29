@@ -168,6 +168,9 @@ function View(model){
       winner = model.players['2']['name'];
     }
 
+    setTimeout(function(){
+      $('.chuckNorrisQuote p').text(controller.getQuote(winner));
+    }, 3000)
     //wait a few seconds
     //add the win quote for the character to the win modal
     //show the win modal
@@ -258,6 +261,27 @@ function Controller(model){
       });
     }
 
+  }
+
+  this.getQuote = function(winner){
+    $.ajax({
+        method: 'get',
+        url: 'https://api.chucknorris.io/jokes/random',
+        dataType: 'json',
+        success: function(quote){
+
+          var regEx = new RegExp('chuck norris', 'ig');
+          var chuckNorrisQuote = quote.value;
+
+          var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+
+          console.log(winnerQuote);
+          return winnerQuote;
+        },
+        error: function(){
+          console.log('something went wrong!')
+        }
+    })
   }
 
 }

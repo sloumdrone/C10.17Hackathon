@@ -25,6 +25,7 @@ function TriviaDB(player){ //takes in the player object and populates the variab
                 difficulty: this.difficulty,
                 type: this.questionType,
                 token: game.token
+
             },
             url: 'https://opentdb.com/api.php',
             success: function(data){
