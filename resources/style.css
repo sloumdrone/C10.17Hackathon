@@ -80,6 +80,7 @@ body {
 .gameBoard {
     height: 100vh;
     width: 100vw;
+    display: none;
 }
 
 .statsContainer {
