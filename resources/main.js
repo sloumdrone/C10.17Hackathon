@@ -1,23 +1,25 @@
 
-var game = new GameModel();
+
 $(document).ready(initialize)
 
 function initialize(){
 
-    var view = new View(game);
+  var game = new GameModel();
+  var view = new View(game);
   var controller = new Controller(game);
-
-  controller.getQuote();
-
-  addClickHandlers(game);
-
+  game.setController(controller);
+  game.setView(view);
+  view.setController(controller);
+  controller.setView(view);
+  addClickHandlers(game, view);
 }
 
-function addClickHandlers(){
+function addClickHandlers(game, view, player){
     $('.playerAvatar').click(function(){
       if (game.clickable){
         var characterSelection = $(event.target).attr('id');
         game.addPlayer(characterSelection);
+        // view.addOutlineToSelectedPlayer();
       }
     });
 }
@@ -34,14 +36,18 @@ function GameModel(){
     //2 : Player {}
     //built using the add
   }
-
-  this.checkWinState = function(){
-    if (this.players['1']['hitPoints'] <= 0 || this.players['2']['hitPoints'] <= 0){
-      this.clickable = false;
-      this.gameState = 'endgame';
-      view.showEndgameWinner();
-    }
+  var controller = null;
+  this.setController = function(control){
+      controller = control;
+      delete this.setController;
   }
+  var view = null;
+  this.setView = function(viewer){
+      view = viewer;
+      delete this.setView;
+  }
+
+
 
   this.availableCharacters = {
     'superman' : {
@@ -120,7 +126,7 @@ function GameModel(){
 
   this.addPlayer = function(character){
     //take selection from player select screen and add that character for that player
-    this.players[this.turn] = new Player(character);
+    this.players[this.turn] = new Player(character, this);
     if (this.turn === 1){
       this.turn = 2;
     } else {
@@ -134,7 +140,7 @@ function GameModel(){
 }
 
 
-function Player(characterSelection){
+function Player(characterSelection, game){
   this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
   this.character = game.availableCharacters[characterSelection];
   this.trivia = {}; //object of arrays of objects
@@ -144,7 +150,6 @@ function Player(characterSelection){
     //replaces chuck norris with character characterName
     //returns info
   }
-
 
 }
 
@@ -169,15 +174,33 @@ function View(model){
     //show the win modal
 
   }
+
+    var controller = null;
+    this.setController = function(control){
+        controller = control;
+        delete this.setController;
+    }
+  //
+  // this.addOutlineToSelectedPlayer = function(){
+  //     $(this).addClass('playerAvatarClicked');
+  //     console.log(this);
+  // }
+
 }
 
 
-function Controller(model){
+function Controller(model,view){
   this.dealDamage = function(amount){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
   }
+
+    var view = null;
+    this.setView = function(viewer){
+        view = viewer;
+        delete this.setView;
+    }
 
   this.getSessionToken = function(){
       $.ajax({
@@ -198,6 +221,14 @@ function Controller(model){
               console.log('error input');
           }
       });
+
+      this.checkWinState = function(){
+        if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
+          model.clickable = false;
+          model.gameState = 'endgame';
+          view.showEndgameWinner();
+        }
+      }
   }
 
   this.retrieveQuestions = function(diff,categoryID,player){
