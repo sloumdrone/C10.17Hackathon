@@ -1,4 +1,4 @@
-//prototype for calling questions
+//functions for calling questions
 
 $(document).ready(init);
 
@@ -40,7 +40,7 @@ function TriviaDB(player){ //takes in the player object and populates the variab
     }
 }
 
-function getSessionToken(){
+function getSessionToken(){ //getting session token, should be called on starting every game
     $.ajax({
         method: 'GET',
         dataType: 'JSON',
