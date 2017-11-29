@@ -7,14 +7,59 @@ body {
     padding: 0;
 }
 
-.player1Container {
-    border: 1px solid;
+/*****************  player selection modal ******************/
+
+.modalContainer {
+    height: 100vh;
+    width: 100vw;
+    display: none;
+}
+
+.playerContainer {
+    border: 1px solid black;
+    height: 100vh;
+    width: 29.5vw;
+    display: inline-block;
 }
 
 .playerSelectionContainer {
     border: 1px solid;
+    height: 100vh;
+    width: 40vw;
+    display: inline-block;
+    vertical-align: top;
 }
 
-.player2Container {
-    border: 1px solid;
+.row {
+    width: 100%;
+    height: 16.6%;
+    text-align: center;
 }
+
+.title {
+    margin: 0;
+}
+
+.playerAvitar {
+    border: 1px solid;
+    display: inline-block;
+    width: 33.3%;
+    height: 100%;
+    float: left;
+}
+
+.playButton {
+    width: 100%;
+    height: 100%;
+}
+
+/************************** gameboard ****************************/
+
+.gameBoard {
+    height: 100vh;
+    width: 100vw;
+    display: none;
+}
+
+
+/*************************** winner modal **************************/
