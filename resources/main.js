@@ -1,18 +1,22 @@
-$(document).ready(initialize);
+var game = new GameModel();
+
+$(document).ready(initialize)
 
 function initialize(){
-  var game = new GameModel();
   var view = new View(game);
   var controller = new Controller(game);
-  addClickHandlers();
+
   controller.getQuote();
+
+  addClickHandlers(game);
+
 }
 
 function addClickHandlers(){
     $('.playerAvatar').click(function(){
       if (game.clickable){
         var characterSelection = $(event.target).attr('id');
-        game.addCharacter(game.availableCharacters[characterSelection]);
+        game.addPlayer(characterSelection);
       }
     });
 }
@@ -37,8 +41,6 @@ function GameModel(){
       view.showEndgameWinner();
     }
   }
-
-
 
   this.availableCharacters = {
     'superman' : {
@@ -125,7 +127,7 @@ function GameModel(){
       this.clickable = false;
       //display loading screen
       //gather trivia questions based on characters
-      //when done, load funciton will trigger ready state
+      //when done, load function will trigger ready state
     }
   }
 }
@@ -134,7 +136,7 @@ function GameModel(){
 function Player(characterSelection){
   this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
   this.character = game.availableCharacters[characterSelection];
-  this.trivia = {} //object of arrays of objects
+  this.trivia = {}; //object of arrays of objects
 
   this.getWinQuote = function(characterName){
     //calls chuck norris api
