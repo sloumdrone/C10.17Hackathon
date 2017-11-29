@@ -109,6 +109,25 @@ function controller(model){
     : model.players[model.turn - 1]['hitPoints'] -= amount;
   }
 
-  this.retrieveToken = function()
+  this.getSessionToken = function(){
+      $.ajax({
+          method: 'GET',
+          dataType: 'JSON',
+          url: 'https://opentdb.com/api_token.php',
+          data: {
+            command: 'request'
+          },
+          success: function(data){
+             if(data.response_code ===0 ){
+                model.token = data.token;
+             }else{
+                 console.error('server response'+ data.response_code +" "+data.response_message);
+             }
+          },
+          error: function(){
+              console.log('error input');
+          }
+      });
+  }
 
 }
