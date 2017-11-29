@@ -59,7 +59,8 @@ body {
     margin: 0;
     font-family: ss4;
     padding: 3% 0;
-    font-size: 3em;
+    font-size: 2.5em;
+    color: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);
 }
 
 .playerAvatar {
@@ -250,7 +251,7 @@ body {
     height: 100vh;
     width: 100vw;
     border: 1px solid black;
-    /*display: none;*/
+    display: none;
 
 }
 
@@ -308,4 +309,3 @@ body {
 
 
 }
-
