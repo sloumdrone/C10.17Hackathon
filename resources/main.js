@@ -40,18 +40,78 @@ function GameModel(){
 
 
   this.availableCharacters = {
-    'superman' : {name: 'Superman', img: 'superman.png', category: ''},
-    'libertybelle' : {name: 'Liberty Belle', img: 'liberty-belle.png', category: ''},
-    'thething' : {name: 'The Thing', img: 'thing.png', category: ''},
-    'mrfantastic' : {name: 'Mr. Fantastic', img: 'mr-fantastic.png', category: ''},
-    'batman' : {name: 'Batman', img: 'batman.png', category: ''},
-    'ironman' : {name: 'Iron Man', img: 'iron-man.png', category: ''},
-    'thor' : {name: 'Thor', img: 'thor.png', category: ''},
-    'nightcrawler' : {name: 'Nightcrawler', img: 'nightcrawler.png', category: ''},
-    'wolverine' : {name: 'Wolverine', img: 'wolverine.png', category: ''},
-    'juggernaut' : {name: 'Juggernaut', img: 'juggernaut.png', category: ''},
-    'mrsinister' : {name: 'Mr. Sinister', img: 'mr-sinister.png', category: ''},
-    'robin' : {name: 'Robin', img: 'robin.png', category: ''}
+    'superman' : {
+      name: 'Superman',
+      img: 'superman.png',
+      category: 'General Knowledge',
+      categoryID: '9'
+    },
+    'libertybelle' : {
+      name: 'Liberty Belle',
+      img: 'liberty-belle.png',
+      category: 'Math',
+      categoryID: '19'
+    },
+    'thething' : {
+      name: 'The Thing',
+      img: 'thing.png',
+      category: 'Computers',
+      categoryID: '18'
+    },
+    'mrfantastic' : {
+      name: 'Mr. Fantastic',
+      img: 'mr-fantastic.png',
+      category: 'Computers',
+      categoryID: '18'
+    },
+    'batman' : {
+      name: 'Batman',
+      img: 'batman.png',
+      category: 'Gadgets',
+      categoryID: '9'
+    },
+    'ironman' : {
+      name: 'Iron Man',
+      img: 'iron-man.png',
+      category: 'Vehicles',
+      categoryID: '28'
+    },
+    'thor' : {
+      name: 'Thor',
+      img: 'thor.png',
+      category: 'Mythology',
+      categoryID: '20'
+    },
+    'nightcrawler' : {
+      name: 'Nightcrawler',
+      img: 'nightcrawler.png',
+      category: 'Video Games',
+      categoryID: '15'
+    },
+    'wolverine' : {
+      name: 'Wolverine',
+      img: 'wolverine.png',
+      category: 'Animals',
+      categoryID: '27'
+    },
+    'juggernaut' : {
+      name: 'Juggernaut',
+      img: 'juggernaut.png',
+      category: 'Sports',
+      categoryID: '21'
+    },
+    'mrsinister' : {
+      name: 'Mr. Sinister',
+      img: 'mr-sinister.png',
+      category: 'History',
+      categoryID: '23'
+    },
+    'robin' : {
+      name: 'Robin',
+      img: 'robin.png',
+      category: 'Comics',
+      categoryID: '29'
+    }
   }
 
   this.addPlayer = function(character){
