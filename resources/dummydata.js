@@ -24,13 +24,13 @@ $(document).ready(function(){
 function renderQuestions(questions){
     var qArray = questions;
     var entry = questions.shift(0);
-    var question = htmlDecode(entry.question);
+    var question = htmlDecode(entry.question);//parses html entities from api string
     var ansList = entry.incorrect_answers; //array of incorrect answers
     var correctAns = entry.correct_answer;
     var randomNum = Math.floor(Math.random()*4);
     ansList.splice(randomNum,0, correctAns);
     questionCount--;
-    $('.questionContainer p').html(question);
+    $('.questionContainer p').text(question);
     for(var ans_i=0;ans_i<ansList.length;ans_i++){
         createDiv(ans_i, correctAns, ansList[ans_i]);
     }

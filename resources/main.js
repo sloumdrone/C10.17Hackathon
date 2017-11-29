@@ -22,6 +22,7 @@ function addClickHandlers(game, view, player){
         // view.addOutlineToSelectedPlayer();
       }
     });
+    $('.questionModal').on('click', '.answer', controller.selectAnswer)
 }
 
 
@@ -159,6 +160,7 @@ function View(model){
   //all of our functions for updating the view will go here
     this.showEndgameWinner = function(){
     var winner;
+    var controller = null;
     if (model.players['1']['hitPoints'] > 0){
       winner = model.players['1']['name'];
     } else {
@@ -174,12 +176,38 @@ function View(model){
     //show the win modal
 
   }
-
-    var controller = null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
     }
+    this.renderQuestion = function(questions){ //renders Question and answers into Arena
+        var qArray = questions;
+        var entry = questions.shift(0);
+        var question = controller.domParser(entry.question);//parses html entities from api string
+        var ansList = entry.incorrect_answers; //array of incorrect answers
+        var correctAns = entry.correct_answer;
+        var randomNum = Math.floor(Math.random()*4);
+        ansList.splice(randomNum,0, correctAns);
+        game.questionsLeft--;
+        $('.questionContainer p').text(question);
+        for(var ans_i=0;ans_i<ansList.length;ans_i++){
+            createDiv(ans_i, correctAns, ansList[ans_i]);
+        }
+    }
+    this.createAnsDiv=function(num, answer, text){
+        var ansDiv= $('<div>',{
+            id: 'q'+num,
+            'class': 'answer',
+            text: text
+        });
+        if(text!==answer){ //stores correct and incorrect properties inside the DOM element
+            ansDiv[0].answer= 'incorrect';
+        }else{
+            ansDiv[0].answer = 'correct'
+        }
+        $('.questionModal').append(ansDiv)
+    }
+
   //
   // this.addOutlineToSelectedPlayer = function(){
   //     $(this).addClass('playerAvatarClicked');
@@ -288,5 +316,8 @@ function Controller(model,view){
         }
     })
   }
-
+  this.domParser = function(input){
+      var doc = new DOMParser().parseFromString(input, "text/html");
+      return doc.documentElement.textContent;
+  }
 }
