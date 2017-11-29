@@ -1,9 +1,10 @@
-var game = new GameModel();
 
+var game = new GameModel();
 $(document).ready(initialize)
 
 function initialize(){
-  var view = new View(game);
+
+    var view = new View(game);
   var controller = new Controller(game);
 
   controller.getQuote();
@@ -161,6 +162,7 @@ function View(model){
 
     setTimeout(function(){
       $('.chuckNorrisQuote p').text(controller.getQuote(winner));
+      $('.winnerModal').show();
     }, 3000)
     //wait a few seconds
     //add the win quote for the character to the win modal
