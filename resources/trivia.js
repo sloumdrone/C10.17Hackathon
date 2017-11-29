@@ -16,6 +16,7 @@ function TriviaDB(player){ //takes in the player object and populates the variab
     this.mediumQuestions = [];
     this.hardQuestions = [];
     this.retrieveQuestions = function(){
+<<<<<<< HEAD
         for(var diff_i = 0; diff_i<this.difficulty.length;diff_i++) {
             $.ajax({
                 method: 'GET',
@@ -48,6 +49,29 @@ function TriviaDB(player){ //takes in the player object and populates the variab
                 }
             });//end of ajaxCall
         }
+=======
+        $.ajax({
+            method: 'GET',
+            dataType: 'JSON',
+            data:{
+                'amount': this.questionAmount,
+                category: this.categoryID,
+                difficulty: this.difficulty,
+                type: this.questionType,
+                token: game.token
+
+            },
+            url: 'https://opentdb.com/api.php',
+            success: function(data){
+               if(data.response_code===0){
+                   return data
+               }
+            },
+            error: function(){
+                console.log('error input')
+            }
+        });//end of ajaxCall
+>>>>>>> 5a66795cb53990f6b9a74c0a6174086cd5d1806a
     }
 }
 

@@ -21,7 +21,7 @@ body {
 .modalContainer {
     height: 100vh;
     width: 100vw;
-    display: none;
+    /*display: none;*/
 }
 
 .playerContainer {
@@ -70,17 +70,94 @@ body {
     float: left;
 }
 
+.playerAvatar:hover {
+    box-shadow: 0 0 20px red;
+}
+
+.playerAvatarClicked {
+    box-shadow: 0 0 20px red;
+}
+
 .playButton {
     width: 100%;
     height: 100%;
+    font-family: ss4;
+    font-size: 3em;
 }
+
+#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wolverine, #robin, #nightcrawler, #superman, #thething {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+#ironman {
+    background-image: url('images/avatars/ironman.jpg');
+}
+
+#libertybell {
+    background-image: url('images/avatars/liberty-belle.jpg');
+}
+
+#batman {
+    background-image: url('images/avatars/batman.jpg');
+}
+
+#juggernaut {
+    background-image: url('images/avatars/juggernaut.jpg');
+}
+
+#mrfantastic {
+    background-image: url('images/avatars/mr-fantastic.jpg');
+}
+
+#mrsinister {
+    background-image: url('images/avatars/mr-sinister.jpg');
+}
+
+#thor {
+    background-image: url('images/avatars/thor.jpg');
+}
+
+#wolverine {
+    background-image: url('images/avatars/wolverine.jpg');
+}
+
+#robin {
+    background-image: url('images/avatars/robin.jpg');
+}
+
+#nightcrawler {
+    background-image: url('images/avatars/nightcrawler.jpg');
+}
+
+#superman {
+    background-image: url('images/avatars/superman.jpg');
+}
+
+#thething {
+    background-image: url('images/avatars/thing.jpg');
+}
+
+
+
+
+
 
 /************************** gameboard ****************************/
 
 .gameBoard {
     height: 100vh;
     width: 100vw;
+    display: none;
 }
+
+.hitPoints {
+  width: 100%;
+  height: 100%;
+  background-color: red;
+}
+
 
 .statsContainer {
     height: 15vh;
@@ -90,31 +167,32 @@ body {
 .hitPointsContainerLeft, .hitPointsContainerRight {
     width: 40vw;
     height: 8vh;
-    border: 1px solid;
+    border: 4px solid yellow;
     position: absolute;
-    top: 8%;
-    transform: translate(-50%, -50%);
+    top: 3%;
 }
 
 .hitPointsContainerLeft {
-    left: 20vw;
-    margin-left: 2%;
+    left: 0.5vw;
 }
 
 .hitPointsContainerRight {
-    left: 80vw;
-    margin-right: 2%;
+    right: 0.5vw;
 }
 
 .timer {
-    height: 12vw;
-    width: 15vw;
-    border: 1px solid;
+    height: 12vh;
+    width: 25vh;
+    border: 8px solid black;
     position: absolute;
-    top: 10%;
+    top: 1.75%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     font-family: fighting;
+    background-color: white;
+    color: blue;
+    font-size: 4rem;
+    text-align: center;
 }
 
 .player1, .player2 {
@@ -176,18 +254,41 @@ body {
     height: 100vh;
     width: 100vw;
     border: 1px solid black;
-
     display: none;
+
 }
 
 .modal{
     border: 1px solid black;
 }
 
+
+.winningCharacter{
+    top: 10%;
+    left: 10%;
+    width: 25vw;
+    height: 70vh;
+    border: 1px solid;
+    position: absolute;
+    background-image: url("images/characters/batman.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.winningCharacter img{
+    width: 100%;
+    height: 100%;
+
+}
+
 .chuckNorrisQuote{
-    margin: 0 auto;
+    top: 35%;
+    left: 40%;
+    width: 50vw;
     height: 30vh;
     border: 1px solid;
+    position: absolute;
 }
 
 .chuckNorrisQuote p{
@@ -195,35 +296,20 @@ body {
     font-size: 5vmin;
 }
 
-.winningCharacter{
-    padding-top: 10%;
-    margin: 0 auto;
-    width: 70%;
-    height: 40%;
-    border: 1px solid;
-    position: relative;
-
+.restart {
+    border: 1px solid black;
+    top: 70%;
+    left: 80%;
+    width: 10vw;
+    height: 5vh;
+    position: absolute;
 }
 
-.winningCharacter div{
+.playAgain{
+    width: 100%;
 
     height: 100%;
-    width: 33%;
-    border: 1px solid black;
-    display: inline-block;
-    position: relative;
 
-}
-.winningCharacter div img{
-    width: 80%;
-    height: 90%;
 
 }
 
-
-
-.againButton {
-    width: 100%;
-    height: 25px;
-
-}
