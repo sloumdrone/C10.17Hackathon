@@ -65,7 +65,13 @@ body {
 .gameBoard {
     height: 100vh;
     width: 100vw;
-    display: none;
+    display: block;
+}
+
+.hitPoints {
+  width: 100%;
+  height: 100%;
+  background-color: fuchsia;
 }
 
 
