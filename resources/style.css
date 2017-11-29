@@ -238,8 +238,12 @@ body {
     height: 20%;
     border: 1px solid;
     display: inline-block;
+    box-sizing: border-box;
+    padding-top: 5%;
 }
-
+.answer:hover{
+    background-color: lightpink;
+}
 
 
 

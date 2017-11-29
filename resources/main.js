@@ -1,7 +1,9 @@
 
+
 $(document).ready(initialize)
 
 function initialize(){
+
   var game = new GameModel();
   var view = new View(game);
   var controller = new Controller(game);
@@ -156,7 +158,7 @@ function Player(characterSelection, game){
 
 function View(model){
   //all of our functions for updating the view will go here
-  this.showEndgameWinner = function(){
+    this.showEndgameWinner = function(){
     var winner;
     if (model.players['1']['hitPoints'] > 0){
       winner = model.players['1']['name'];
@@ -166,6 +168,7 @@ function View(model){
 
     setTimeout(function(){
       $('.chuckNorrisQuote p').text(controller.getQuote(winner));
+      $('.winnerModal').show();
     }, 3000)
     //wait a few seconds
     //add the win quote for the character to the win modal
@@ -229,8 +232,8 @@ function Controller(model,view){
     }
   }
 
+
   this.retrieveQuestions = function(diff){
-    console.log('recieve questions');
       $.ajax({
           method: 'GET',
           dataType: 'JSON',
@@ -258,6 +261,7 @@ function Controller(model,view){
   this.buildQuestionShoe = function(){
     console.log('build shoe');
     var difficulty = ['easy','medium','hard'];
+
     difficulty.forEach((element)=>{
       this.retrieveQuestions(element);
     });

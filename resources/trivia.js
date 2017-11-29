@@ -9,13 +9,47 @@ function init(){
 
 function TriviaDB(player){ //takes in the player object and populates the variables based on players properties
     this.questionAmount = 10;
-    this.categoryID = player.category;
+    this.categoryID = player.categoryID;
     this.difficulty = ['easy','medium','hard'];
     this.questionType = 'multiple';
     this.easyQuestions = [];
     this.mediumQuestions = [];
     this.hardQuestions = [];
     this.retrieveQuestions = function(){
+<<<<<<< HEAD
+        for(var diff_i = 0; diff_i<this.difficulty.length;diff_i++) {
+            $.ajax({
+                method: 'GET',
+                dataType: 'JSON',
+                data: {
+                    'amount': this.questionAmount,
+                    category: this.categoryID,
+                    difficulty: this.difficulty[diff_i],
+                    type: this.questionType,
+                    token: game.token
+                },
+                url: 'https://opentdb.com/api.php',
+                success: function (data) {
+                    if (data.response_code === 0) {
+                        switch (this.difficulty[diff_i]{
+                            case 'easy':
+                                this.easyQuestions.push(data.results);
+                                break;
+                            case 'medium':
+                                this.mediumQuestions.push(data.results);
+                                break;
+                            case 'hard':
+                                this.hardQuestions.push(data.results);
+                                break;
+                        }
+                    }
+                },
+                error: function () {
+                    console.log('error input')
+                }
+            });//end of ajaxCall
+        }
+=======
         $.ajax({
             method: 'GET',
             dataType: 'JSON',
@@ -37,6 +71,7 @@ function TriviaDB(player){ //takes in the player object and populates the variab
                 console.log('error input')
             }
         });//end of ajaxCall
+>>>>>>> 5a66795cb53990f6b9a74c0a6174086cd5d1806a
     }
 }
 
