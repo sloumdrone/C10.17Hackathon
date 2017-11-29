@@ -70,3 +70,60 @@ body {
 
 
 /*************************** winner modal **************************/
+
+.winnerModal {
+    height: 100vh;
+    width: 100vw;
+    border: 1px solid black;
+
+    display: none;
+}
+
+.modal{
+    border: 1px solid black;
+}
+
+.chuckNorrisQuote{
+    margin: 0 auto;
+    width: 70vw;
+    height: 30vh;
+    border: 1px solid;
+}
+
+.chuckNorrisQuote p{
+    margin: 0 auto;
+    font-size: 5vmin;
+}
+
+.winningCharacter{
+    padding-top: 10%;
+    margin: 0 auto;
+    width: 70%;
+    height: 40%;
+    border: 1px solid;
+    position: relative;
+
+}
+
+.winningCharacter div{
+
+    height: 100%;
+    width: 33%;
+    border: 1px solid black;
+    display: inline-block;
+    position: relative;
+
+}
+.winningCharacter div img{
+    width: 80%;
+    height: 90%;
+
+}
+
+
+
+.againButton {
+    width: 100%;
+    height: 25px;
+
+}
