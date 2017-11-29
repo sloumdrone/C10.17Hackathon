@@ -1,7 +1,14 @@
 * {
     box-sizing: border-box;
 }
-
+@font-face {
+    font-family: ss4;
+    src: url(Font/SSF4.ttf)
+}
+@font-face {
+    font-family: fighting;
+    src: url(Font/Fighting.TTF)
+}
 body {
     margin: 0;
     padding: 0;
