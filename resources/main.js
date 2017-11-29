@@ -154,6 +154,9 @@ function View(model){
       winner = model.players['2']['name'];
     }
 
+    setTimeout(function(){
+      $('.chuckNorrisQuote p').text()
+    }, 3000)
     //wait a few seconds
     //add the win quote for the character to the win modal
     //show the win modal
@@ -162,7 +165,7 @@ function View(model){
 }
 
 
-function controller(model){
+function Controller(model){
   this.dealDamage = function(amount){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
