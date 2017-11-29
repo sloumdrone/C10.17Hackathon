@@ -140,6 +140,8 @@ function Player(characterSelection){
     //replaces chuck norris with character characterName
     //returns info
   }
+
+
 }
 
 
@@ -191,6 +193,44 @@ function Controller(model){
               console.log('error input');
           }
       });
+  }
+
+  this.retrieveQuestions = function(diff,categoryID,player){
+    console.log('recieve questions');
+      $.ajax({
+          method: 'GET',
+          dataType: 'JSON',
+          data:{
+              'amount': 10,
+              category: categoryID,
+              difficulty: diff,
+              type: 'multiple',
+              token: model.token
+          },
+          url: 'https://opentdb.com/api.php',
+          success: function(data){
+             if(data.response_code===0){
+                 model.players[player]['questions'][diff] = data.results;
+                 console.log('finished ' + player + ' ' + diff);
+             } else {
+               alert('Issue with question retrieval. Response code: ' + data.responsecode);
+             }
+          },
+          error: function(){
+              console.log('error input')
+          }
+      });
+  }
+
+  this.buildQuestionShoe = function(){
+    console.log('build shoe');
+    var difficulty = ['easy','medium','hard'];
+    for (player in model.players){
+      difficulty.forEach((element)=>{
+        this.retrieveQuestions(element,model.players[player]['categoryID'],player);
+      });
+    }
+
   }
 
 }
