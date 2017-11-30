@@ -110,9 +110,9 @@ function GameModel(){
             category: 'Video Games',
             categoryID: '15'
         },
-        'wolverine' : {
-            name: 'Wolverine',
-            img: 'wolverine.png',
+        'wonderwoman' : {
+            name: 'wonderwoman',
+            img: 'wonderwoman.png',
             category: 'Animals',
             categoryID: '27'
         },
@@ -280,7 +280,6 @@ function View(model){
               $('.gameBoard').fadeIn(3000);
               $('.readyBanner').slideDown('slow');
               // add function that triggers game start/load screen
-
             }
         })
     };
