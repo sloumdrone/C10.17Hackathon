@@ -41,15 +41,21 @@ body {
     background-position: center;
 }
 
-/*.playerInfo {*/
-    /*height: 20vh;*/
-    /*width: 22vw;*/
-    /*border: 1px solid;*/
-    /*position: absolute;*/
-    /*vertical-align: bottom;*/
-    /*top: 78vh;*/
-    /*left: 4vw;*/
-/*}*/
+.playerInfo {
+    height: 20vh;
+    width: 22vw;
+    border: 1px solid;
+    position: absolute;
+    top: 76vh;
+}
+
+.playerInfoLeft {
+    left: 4vw;
+}
+
+.playerInfoRight {
+    right: 4vw;
+}
 
 .playerContainerRight {
     position: absolute;
@@ -61,10 +67,6 @@ body {
     /*rotateY(135deg);*/
     /*-webkit-transform: rotateY(135deg); !* Safari *!*/
     /*transform: rotateY(180deg);*/
-}
-
-.playerPhotoLeft {
-    position: absolute;
 }
 
 .playerSelectionContainer {

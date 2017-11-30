@@ -41,7 +41,7 @@ function GameModel(){
     this.bothPlayersSelected = false;
     this.turn = 1;
     this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-    this.questionsLeft = 10; //tracks the number of questions asked
+    // this.questionsLeft = 10; //tracks the number of questions asked
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -65,7 +65,7 @@ function GameModel(){
       'wood-ruins.gif',
       'mansion.gif',
       'over-pass.gif'
-    ]
+    ];
 
     this.availableCharacters = {
         'superman' : {
@@ -218,7 +218,7 @@ function View(model){
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
-        model.questionsLeft--;
+        // model.questionsLeft--;
         var catSpan = $('<span>',{
             text: category,
             'class': 'category'
@@ -227,7 +227,7 @@ function View(model){
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        if(model.questionsLeft===0){
+        if(model.questionBank.length===0){
             //wincheckstate & player change
             controller.checkWinState();
         }
@@ -304,9 +304,9 @@ function View(model){
                 if (model.bothPlayersSelected === false) {
                     var characterImg = $(event.target).attr('id');
                     if (model.turn === 1) {
-                        $('.playerContainerLeft').addClass('playerPhotoLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     } else {
-                        $('.playerContainerRight').addClass('playerPhotoRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     }
                 }
             }, function () {
@@ -317,6 +317,17 @@ function View(model){
                 }
             });
         }
+
+    // this.handlePlayerInfoOnHover = function(){
+    //     $('.playerAvatar').hover(function () {
+    //         if (model.bothPlayersSelected === false) {
+    //             var characterInfo = $(event.target).attr('id');
+    //             if (model.turn === 1) {
+    //
+    //             }
+    //         }
+    //     })
+    // }
 
 }
 
@@ -386,7 +397,7 @@ function Controller(model,view){
     };
 
 
-  this.getSessionToken = function(){
+  this.getSessionToken = function(){  //avoids receiving same question w/in 6 hour period
       $.ajax({
           method: 'GET',
           dataType: 'JSON',
@@ -479,28 +490,6 @@ function Controller(model,view){
             });
         };
 
-
-    this.getQuote = function(winner, winnerImg){
-        $.ajax({
-            method: 'get',
-            url: 'https://api.chucknorris.io/jokes/random',
-            dataType: 'json',
-            success: function(quote){
-                console.log('original', quote.value);
-                var regEx = new RegExp('chuck norris', 'ig');
-                var chuckNorrisQuote = quote.value;
-                var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
-
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-                console.log('winnerQuote',winnerQuote);
-                return winnerQuote;
-            },
-            error: function(){
-                console.log('something went wrong!')
-            }
-        });
-    };
 
 
       this.selectAnswer = function (element) {
