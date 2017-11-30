@@ -30,7 +30,8 @@ function addClickHandlers(game, view, controller){
         controller.selectAnswer(this, view)
     });
     $('.readyButton').on('click',function(){
-        controller.questionBank(game.questions)
+        controller.questionBank(game.questions);
+        $('.readyBanner').fadeOut()
     });
 }
 
@@ -42,7 +43,7 @@ function GameModel(){
     this.bothPlayersSelected = false;
     this.turn = 1;
     this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-    this.questionsLeft = 10; //tracks the number of questions asked
+    // this.questionsLeft = 10; //tracks the number of questions asked
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -66,7 +67,7 @@ function GameModel(){
       'wood-ruins.gif',
       'mansion.gif',
       'over-pass.gif'
-    ]
+    ];
 
     this.availableCharacters = {
         'superman' : {
@@ -186,8 +187,6 @@ function Player(characterSelection, game){
 
 }
 
-
-
 function View(model){
   //all of our functions for updating the view will go here
 
@@ -230,7 +229,7 @@ function View(model){
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
-        model.questionsLeft--;
+        // model.questionsLeft--;
         var catSpan = $('<span>',{
             text: category,
             'class': 'category'
@@ -239,9 +238,9 @@ function View(model){
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        if(model.questionsLeft===0){
+        if(model.questionBank.length===0){
             //wincheckstate & player change
-            controller.winCheck();
+            controller.checkWinState();
         }
     };
     this.createAnsDiv=function(num,text, entry){
@@ -299,6 +298,7 @@ function View(model){
             if(model.playButtonClickable) {
               model.playButtonClickable = false;
               model.avatarClickable = false;
+              model.turn = 1;
 
 
               $('.modalContainer').fadeOut(3000);
@@ -349,9 +349,9 @@ function Controller(model,view){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
-                var maxQ = 2;
+                var maxQ = 3;
                 if(key==='easy'){
-                    maxQ=3
+                    maxQ=4
                 }
                 for(var sub_i=0;sub_i<maxQ;sub_i++){
                     var qEntry = questionsObj[key].shift();
@@ -375,7 +375,14 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
+    if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
+        this.checkWinState();
+    }else{
+        view.renderQuestion(model.questionBank)
+    }
+
   };
+
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
       if(boolean){
@@ -435,7 +442,7 @@ function Controller(model,view){
               model.turn -= 1;
           }
           $('.readyBanner').slideDown('slow');
-          controller.questionBank(model.questions)
+          this.questionBank(model.questions)
       }
   };
 
@@ -473,52 +480,6 @@ function Controller(model,view){
 
       };
 
-        this.getQuote = function(winner, winnerImg){
-            $.ajax({
-                method: 'get',
-                url: 'https://api.chucknorris.io/jokes/random',
-                dataType: 'json',
-                success: function(quote){
-                    console.log('original', quote.value);
-                    var regEx = new RegExp('chuck norris', 'ig');
-                    var chuckNorrisQuote = quote.value;
-                    var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                    $('.chuckNorrisQuote p').text(winnerQuote);
-
-                    $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-                    console.log('winnerQuote',winnerQuote);
-                    return winnerQuote;
-                },
-                error: function(){
-                    console.log('something went wrong!')
-                }
-            });
-        };
-
-    // this.getQuote = function(winner, winnerImg){
-    //     $.ajax({
-    //         method: 'get',
-    //         url: 'https://api.chucknorris.io/jokes/random',
-    //         dataType: 'json',
-    //         success: function(quote){
-    //             console.log('original', quote.value);
-    //             var regEx = new RegExp('chuck norris', 'ig');
-    //             var chuckNorrisQuote = quote.value;
-    //             var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-    //             $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
-    //
-    //             $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-    //             console.log('winnerQuote',winnerQuote);
-    //             return winnerQuote;
-    //         },
-    //         error: function(){
-    //             console.log('something went wrong!')
-    //         }
-    //     });
-
-
-    // }
-
     this.getCharacterInfo = function () {
         for (var key in model.availableCharacters){
             $.ajax({
@@ -535,8 +496,31 @@ function Controller(model,view){
         }
     }
 
+    this.getQuote = function(winner, winnerImg) {
+        $.ajax({
+            method: 'get',
+            url: 'https://api.chucknorris.io/jokes/random',
+            dataType: 'json',
+            success: function (quote) {
+                console.log('original', quote.value);
+                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                var chuckNorrisQuote = quote.value;
+                var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
+                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen')) //makes font tag to change color of the name
+                $('.chuckNorrisQuote p').append(greenTxt);
+
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')
+                console.log('winnerQuote', winnerQuote);
+                return winnerQuote;
+            },
+            error: function () {
+                console.log('something went wrong!')
+            }
+        });
+    }
+
       this.selectAnswer = function (element) {
-        console.log('hey select answer here', element.answer); //delete me after a while
+        console.log('hey select answer here', element.answer, model.turn); //delete me after a while
 
           var specialty = false;
 
