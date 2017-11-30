@@ -60,6 +60,7 @@ body {
 }
 
 .playerInfo {
+    font-family: 'Ubuntu', sans-serif;
     height: 20vh;
     width: 22vw;
     position: absolute;
@@ -84,10 +85,10 @@ body {
 
 .playerContainerRight {
     right: 0%;
+    transform: scaleX(-1);
 }
 
 .playerContainerLeft {
-    transform: scaleX(-1);
     /*rotateY(135deg);*/
     /*-webkit-transform: rotateY(135deg); !* Safari *!*/
     /*transform: rotateY(180deg);*/
@@ -350,12 +351,12 @@ h1 {
 
 .player1 {
     left: 13vw;
-    transform: translate(-50%, -50%) scaleX(-1);
+    transform: translate(-50%, -50%);
 }
 
 .player2 {
     left: 87vw;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scaleX(-1);
 }
 
 .questionModal {
@@ -368,9 +369,13 @@ h1 {
     transform: translate(-50%, -50%);
     text-align: center;
     font-family: sans-serif;
+    opacity: 0;
+    transition: .75s;
 }
 
+
 .questionContainer, .answerContainer {
+    font-family: 'Ubuntu', sans-serif;
     width: 90%;
     height: 40%;
     border: 1px solid;
@@ -380,8 +385,9 @@ h1 {
 
 
 .answer {
-    width: 50%;
-    height: 50%;
+    font-family: 'Ubuntu', sans-serif;
+    width: 45%;
+    height: 20%;
     border: 1px solid;
     display: inline-block;
     box-sizing: border-box;
