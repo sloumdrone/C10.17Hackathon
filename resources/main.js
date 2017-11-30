@@ -505,7 +505,7 @@ function Controller(model,view){
     //     });
 
 
-    }
+    // }
 
 
       this.selectAnswer = function (element) {
