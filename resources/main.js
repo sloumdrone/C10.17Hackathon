@@ -324,6 +324,8 @@ function View(model){
 
 
               $('.modalContainer').hide();
+              $('#p1name').text(model.players[1].character.name);
+              $('#p2name').text(model.players[2].character.name);
               $('.gameBoard').show();
               $('.readyBanner').show('slow');
 
@@ -530,9 +532,13 @@ function Controller(model,view){
 
     this.getCharacterInfo = function (character) {
         $.ajax({
-            method: 'get',
-            url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[character].heroID,
+            method: 'post',
+            url: 'http://danielpaschal.com/lfzproxy.php',
             dataType: 'json',
+            data: {
+              url: 'http://superheroapi.com/api/10159579732380612/'+ model.availableCharacters[character].heroID,
+              color: 'lavender'
+            },
             success: function (data) {
                 model.availableCharacters[character].characterInfo = data;
             },
