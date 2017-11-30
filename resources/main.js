@@ -31,7 +31,7 @@ function addClickHandlers(game, view, controller){
     });
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        $('.readyBanner').fadeOut()
+        $('.readyBanner').slideUp()
     });
 }
 
@@ -176,6 +176,7 @@ function GameModel(){
 
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
+    this.domHitPoints = $('.hitPoints').css('width');
     this.character = game.availableCharacters[characterSelection];
     this.trivia = {}; //object of arrays of objects
 
@@ -244,6 +245,11 @@ function View(model){
         console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
             //wincheckstate & player change
+            if(model.turn===1){
+                $('.readyButton span').text('P2')
+            }else{
+                $('.readyButton span').text('P1')
+            }
             controller.checkWinState();
             console.log('****after checking winstate + ',qArray);
         }
@@ -262,29 +268,16 @@ function View(model){
         }else{
             ansDiv[0].answer = 'correct'
         }
-        $('.questionModal').append(ansDiv)
+        $('.answerContainer').append(ansDiv)
     };
     this.renderDmg = function(amount){
-        var percent = amount/100;//get percent equivalent of the dmg
-        var hpBar=null;
-        var hp=null;
-        var dmg=null;
-        var remainingHp=null;
         if(model.turn === 1){
-            hpBar = $('.right');
+            currentHpBar = $('.right');
 
         }else{
-            hpBar = $('.left')
+            currentHpBar = $('.left');
         }
-        var hpBar2 = hpBar.css('width');
-        hp = parseInt(hpBar2.substring(0,hpBar2.indexOf('p')));
-        dmg = Math.round(hp*percent);
-        if(hp-dmg<0){
-            remainingHp=0;
-        }else{
-            remainingHp=hp-dmg
-        }
-        hpBar.css('width', remainingHp+"px") //reduces the width by the percentage of the dmg.
+        currentHpBar.css('width', amount+"%") //reduces the width by the percentage of the dmg.
     };
 
   //
@@ -313,7 +306,7 @@ function View(model){
 
               // add function that triggers game start/load screen
             }
-        })
+        });
         this.renderHeroInArena(model.players);
     };
 
@@ -386,7 +379,13 @@ function Controller(model,view){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
-    view.renderDmg(amount);
+    var hpTarget= null;
+    if(model.turn===1){
+        hpTarget = model.players[2]['hitPoints']
+    }else{
+        hpTarget = model.players[1]['hitPoints']
+    }
+    view.renderDmg(hpTarget);
     if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
         this.checkWinState();
     }
@@ -396,17 +395,17 @@ function Controller(model,view){
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
       if(boolean){
-          damagePercent+=5;
+          damagePercent+=7;
       }
       switch (difficulty){
           case 'easy':
-              damagePercent+=20;
+              damagePercent+=14;
               break;
           case 'medium':
-              damagePercent+=25;
+              damagePercent+=17;
               break;
           case 'hard':
-              damagePercent+=30;
+              damagePercent+=20;
               break;
       }
       return damagePercent
@@ -504,7 +503,7 @@ function Controller(model,view){
                 }
             });
         }
-    }
+    };
 
     this.getQuote = function(winner, winnerImg) {
         $.ajax({
