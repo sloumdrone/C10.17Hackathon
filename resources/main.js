@@ -75,7 +75,7 @@ function GameModel(){
             img: 'superman.png',
             category: 'General Knowledge',
             categoryID: '9',
-            heroheroID: '644'
+            heroID: '644'
         },
         'libertybelle' : {
             name: 'Liberty Belle',
@@ -93,7 +93,7 @@ function GameModel(){
         'mrfantastic' : {
             name: 'Mr. Fantastic',
             img: 'mr-fantastic.png',
-            category: 'Computers',
+            category: "Science: Computers",
             categoryID: '18',
             heroID: '456'
         },
