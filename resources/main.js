@@ -13,6 +13,7 @@ function initialize(){
     controller.setView(view);
     addClickHandlers(game, view);
     view.handleAvatarHover();
+    controller.buildQuestionShoe();
 }
 
 function addClickHandlers(game, view, player){
