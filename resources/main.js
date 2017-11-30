@@ -11,10 +11,10 @@ function initialize(){
   game.setView(view);
   view.setController(controller);
   controller.setView(view);
-  addClickHandlers(game, view);
+  addClickHandlers(game, view, controller);
 }
 
-function addClickHandlers(game, view, player){
+function addClickHandlers(game, view, player, controller){
     $('.playerAvatar').click(function(){
       if (game.clickable){
         var characterSelection = $(event.target).attr('id');
@@ -129,14 +129,19 @@ function GameModel(){
     this.players[this.turn] = new Player(character, this);
     if (this.turn === 1){
       this.turn = 2;
+        console.log(this.players)
     } else {
       this.gameState = 'loading';
       this.clickable = false;
       //display loading screen
       //gather trivia questions based on characters
       //when done, load function will trigger ready state
+
+
+
     }
   }
+
 }
 
 
@@ -159,15 +164,23 @@ function View(model){
   //all of our functions for updating the view will go here
   this.showEndgameWinner = function(){
     var winner;
-    if (model.players['1']['hitPoints'] > 0){
-      winner = model.players['1']['name'];
-    } else {
-      winner = model.players['2']['name'];
-    }
+    var winnerImg;
 
+    if (model.players['1']['hitPoints'] > 0){
+      // winner = model.players['1']['name'];
+        winner = model.players['1']['character']['name'];
+        winnerImg = model.players['1']['character']['img']
+    } else {
+      // winner = model.players['2']['name'];
+        winner = model.players['2']['character']['name'];
+        winnerImg = model.players['2']['character']['img']
+    }
+    controller.getQuote(winner, winnerImg);
     setTimeout(function(){
-      $('.chuckNorrisQuote p').text(controller.getQuote(winner));
+
+        $('.gameBoard').hide();
       $('.winnerModal').show();
+
     }, 3000)
     //wait a few seconds
     //add the win quote for the character to the win modal
@@ -221,14 +234,6 @@ function Controller(model,view){
               console.log('error input');
           }
       });
-
-      this.checkWinState = function(){
-        if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
-          model.clickable = false;
-          model.gameState = 'endgame';
-          view.showEndgameWinner();
-        }
-      }
   }
 
   this.retrieveQuestions = function(diff,categoryID,player){
@@ -269,25 +274,33 @@ function Controller(model,view){
 
   }
 
-  this.getQuote = function(winner){
+  this.getQuote = function(winner, winnerImg){
     $.ajax({
         method: 'get',
         url: 'https://api.chucknorris.io/jokes/random',
         dataType: 'json',
         success: function(quote){
-
+            console.log('original', quote.value);
           var regEx = new RegExp('chuck norris', 'ig');
           var chuckNorrisQuote = quote.value;
-
           var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+          $('.chuckNorrisQuote p').text(winnerQuote);
 
-          console.log(winnerQuote);
+          $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
+          console.log('winnerQuote',winnerQuote);
           return winnerQuote;
         },
         error: function(){
           console.log('something went wrong!')
         }
-    })
+    });
   }
+    this.checkWinState = function(){
+        if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0){
+            model.clickable = false;
+            model.gameState = 'endgame';
+            view.showEndgameWinner();
+        }
+    }
 
 }
