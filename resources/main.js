@@ -229,7 +229,7 @@ function View(model){
         }
         if(model.questionsLeft===0){
             //wincheckstate & player change
-            controller.winCheck();
+            controller.checkWinState();
         }
     };
     this.createAnsDiv=function(num,text, entry){
@@ -287,6 +287,7 @@ function View(model){
             if(model.playButtonClickable) {
               model.playButtonClickable = false;
               model.avatarClickable = false;
+              model.turn = 1;
 
 
               $('.modalContainer').fadeOut(3000);
@@ -326,9 +327,9 @@ function Controller(model,view){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
-                var maxQ = 2;
+                var maxQ = 3;
                 if(key==='easy'){
-                    maxQ=3
+                    maxQ=4
                 }
                 for(var sub_i=0;sub_i<maxQ;sub_i++){
                     var qEntry = questionsObj[key].shift();
@@ -352,6 +353,12 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
+    if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
+        this.checkWinState();
+    }else{
+        view.renderQuestion(model.questionBank)
+    }
+
   };
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
@@ -412,7 +419,7 @@ function Controller(model,view){
               model.turn -= 1;
           }
           $('.readyBanner').slideDown('slow');
-          controller.questionBank(model.questions)
+          this.questionBank(model.questions)
       }
   };
 
@@ -493,7 +500,7 @@ function Controller(model,view){
                 console.log('something went wrong!')
             }
         });
-    }
+    };
 
 
       this.selectAnswer = function (element) {
