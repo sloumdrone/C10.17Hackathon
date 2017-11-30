@@ -29,7 +29,8 @@ function addClickHandlers(game, view, controller){
         controller.selectAnswer(this, view)
     });
     $('.readyButton').on('click',function(){
-        controller.questionBank(game.questions)
+        controller.questionBank(game.questions);
+        $('.readyBanner').fadeOut()
     });
 }
 
@@ -492,7 +493,7 @@ function Controller(model,view){
     }
 
       this.selectAnswer = function (element) {
-        console.log('hey select answer here', element.answer); //delete me after a while
+        console.log('hey select answer here', element.answer, model.turn); //delete me after a while
 
           var specialty = false;
 
