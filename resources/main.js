@@ -303,9 +303,9 @@ function View(model){
                 if (model.bothPlayersSelected === false) {
                     var characterImg = $(event.target).attr('id');
                     if (model.turn === 1) {
-                        $('.playerContainerLeft').addClass('playerPhotoLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     } else {
-                        $('.playerContainerRight').addClass('playerPhotoRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     }
                 }
             }, function () {
@@ -316,6 +316,17 @@ function View(model){
                 }
             });
         }
+
+    // this.handlePlayerInfoOnHover = function(){
+    //     $('.playerAvatar').hover(function () {
+    //         if (model.bothPlayersSelected === false) {
+    //             var characterInfo = $(event.target).attr('id');
+    //             if (model.turn === 1) {
+    //
+    //             }
+    //         }
+    //     })
+    // }
 
 }
 
@@ -379,7 +390,7 @@ function Controller(model,view){
     };
 
 
-  this.getSessionToken = function(){
+  this.getSessionToken = function(){  //avoids receiving same question w/in 6 hour period
       $.ajax({
           method: 'GET',
           dataType: 'JSON',
@@ -472,27 +483,28 @@ function Controller(model,view){
             });
         };
 
+    // this.getQuote = function(winner, winnerImg){
+    //     $.ajax({
+    //         method: 'get',
+    //         url: 'https://api.chucknorris.io/jokes/random',
+    //         dataType: 'json',
+    //         success: function(quote){
+    //             console.log('original', quote.value);
+    //             var regEx = new RegExp('chuck norris', 'ig');
+    //             var chuckNorrisQuote = quote.value;
+    //             var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+    //             $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
+    //
+    //             $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
+    //             console.log('winnerQuote',winnerQuote);
+    //             return winnerQuote;
+    //         },
+    //         error: function(){
+    //             console.log('something went wrong!')
+    //         }
+    //     });
 
-    this.getQuote = function(winner, winnerImg){
-        $.ajax({
-            method: 'get',
-            url: 'https://api.chucknorris.io/jokes/random',
-            dataType: 'json',
-            success: function(quote){
-                console.log('original', quote.value);
-                var regEx = new RegExp('chuck norris', 'ig');
-                var chuckNorrisQuote = quote.value;
-                var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
 
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-                console.log('winnerQuote',winnerQuote);
-                return winnerQuote;
-            },
-            error: function(){
-                console.log('something went wrong!')
-            }
-        });
     }
 
 
