@@ -41,7 +41,7 @@ function GameModel(){
     this.bothPlayersSelected = false;
     this.turn = 1;
     this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-    this.questionsLeft = 10; //tracks the number of questions asked
+    // this.questionsLeft = 10; //tracks the number of questions asked
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -65,7 +65,7 @@ function GameModel(){
       'wood-ruins.gif',
       'mansion.gif',
       'over-pass.gif'
-    ]
+    ];
 
     this.availableCharacters = {
         'superman' : {
@@ -218,7 +218,7 @@ function View(model){
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
-        model.questionsLeft--;
+        // model.questionsLeft--;
         var catSpan = $('<span>',{
             text: category,
             'class': 'category'
@@ -227,9 +227,9 @@ function View(model){
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        if(model.questionsLeft===0){
+        if(model.questionBank.length===0){
             //wincheckstate & player change
-            controller.winCheck();
+            controller.checkWinState();
         }
     };
     this.createAnsDiv=function(num,text, entry){
@@ -287,6 +287,7 @@ function View(model){
             if(model.playButtonClickable) {
               model.playButtonClickable = false;
               model.avatarClickable = false;
+              model.turn = 1;
 
 
               $('.modalContainer').fadeOut(3000);
@@ -337,9 +338,9 @@ function Controller(model,view){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
-                var maxQ = 2;
+                var maxQ = 3;
                 if(key==='easy'){
-                    maxQ=3
+                    maxQ=4
                 }
                 for(var sub_i=0;sub_i<maxQ;sub_i++){
                     var qEntry = questionsObj[key].shift();
@@ -363,6 +364,12 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
+    if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
+        this.checkWinState();
+    }else{
+        view.renderQuestion(model.questionBank)
+    }
+
   };
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
@@ -423,7 +430,7 @@ function Controller(model,view){
               model.turn -= 1;
           }
           $('.readyBanner').slideDown('slow');
-          controller.questionBank(model.questions)
+          this.questionBank(model.questions)
       }
   };
 
@@ -483,10 +490,6 @@ function Controller(model,view){
             }
         });
     }
-
-
-
-
 
       this.selectAnswer = function (element) {
         console.log('hey select answer here', element.answer); //delete me after a while
