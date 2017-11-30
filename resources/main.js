@@ -14,6 +14,9 @@ function initialize(){
     addClickHandlers(game, view);
     view.handleAvatarHover();
     controller.buildQuestionShoe();
+    function console(){
+        console.log('lol')
+    }
 }
 
 function addClickHandlers(game, view, player, controller){
@@ -424,6 +427,7 @@ function Controller(model,view){
         });
     }
       this.selectAnswer = function (element, difficulty) {
+        console.log('hey select answer here')
           var specialty = false;
           if (element.answer === 'correct') {
               if (element.category === model.player[mode.turn].character.category) {
