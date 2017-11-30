@@ -35,7 +35,7 @@ function addClickHandlers(game, view, controller){
         game.roundTime=60;
         view.renderTimer();
         $('.readyBanner').fadeOut();
-        $('.questionModal').css('opacity', '1');
+        $('.questionModal').addClass('questionModalShow');
         console.log(game.roundTime);
     });
 }
@@ -263,6 +263,7 @@ function View(model){
         }
         // console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
+            $('.questionModal').removeClass('questionModalShow');
             clearInterval(model.roundTimer);
             //wincheckstate & player change
             if(model.turn===1){
@@ -323,6 +324,8 @@ function View(model){
 
 
               $('.modalContainer').hide();
+              $('#p1name').text(model.players[1].character.name);
+              $('#p2name').text(model.players[2].character.name);
               $('.gameBoard').show();
               $('.readyBanner').show('slow');
 
@@ -333,32 +336,38 @@ function View(model){
     };
 
     this.handleAvatarHover = function (){
-            $('.playerAvatar').hover(function () {
-                if (model.bothPlayersSelected === false) {
-                    var characterImg = $(event.target).attr('id');
-                    if (model.turn === 1) {
-                        $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
-                        $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
-                        $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
-                    } else {
-                        $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
-                        $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
-                        $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
-                    }
-                }
-            }, function () {
+        $('.playerAvatar').hover(function () {
+            if (model.bothPlayersSelected === false) {
+                var characterImg = $(event.target).attr('id');
                 if (model.turn === 1) {
-                    $('.playerContainerLeft').removeClass('playerPhotoLeft');
+                    $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.infoHeaderName').text('Real Name: ');
+                    $('#realNameLeft').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                    $('.infoHeaderPower').text('Power: ');
+                    $('#categoryIDLeft').text(model.availableCharacters[characterImg].category);
+                    $('.infoHeaderOccupation').text('Occupation: ');
+                    $('#occupationLeft').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 } else {
-                    $('.playerContainerRight').removeClass('playerPhotoRight');
+                    $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.infoHeaderName').text('Real Name: ');
+                    $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                    $('.infoHeaderPower').text('Power: ');
+                    $('#categoryIDRight').text(model.availableCharacters[characterImg].category);
+                    $('.infoHeaderOccupation').text('Occupation: ');
+                    $('#occupationRight').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 }
-            });
-        };
+            }
+        }, function () {
+            if (model.turn === 1) {
+                $('.playerContainerLeft').removeClass('playerPhotoLeft');
+            } else {
+                $('.playerContainerRight').removeClass('playerPhotoRight');
+            }
+        });
+    };
 
     this.renderHeroInArena = function(players){   //renders each players img to main game board arena
-        console.log('it works');
+        // console.log('it works');
         $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
     };
@@ -370,7 +379,8 @@ function View(model){
             model.roundTime--;
             $('.currentTime').text(model.roundTime);
             if(model.roundTime===0){
-                console.log('stop');
+                // console.log('stop');
+                $('.questionModal').removeClass('questionModalShow');
                 clearInterval(model.roundTimer);
                 if(model.turn===1){
                     $('.readyButton span').text('P2')
@@ -542,9 +552,13 @@ function Controller(model,view){
 
     this.getCharacterInfo = function (character) {
         $.ajax({
-            method: 'get',
-            url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[character].heroID,
+            method: 'post',
+            url: 'http://danielpaschal.com/lfzproxy.php',
             dataType: 'json',
+            data: {
+              url: 'http://superheroapi.com/api/10159579732380612/'+ model.availableCharacters[character].heroID,
+              color: 'lavender'
+            },
             success: function (data) {
                 model.availableCharacters[character].characterInfo = data;
             },
@@ -574,7 +588,7 @@ function Controller(model,view){
                 var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
                 $('.chuckNorrisQuote p').append(greenTxt);
 
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
                 console.log('winnerQuote', winnerQuote);
                 return winnerQuote;
             },
