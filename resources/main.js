@@ -1,6 +1,6 @@
 
 
-$(document).ready(initialize)
+$(document).ready(initialize);
 
 function initialize(){
 
@@ -14,7 +14,7 @@ function initialize(){
     controller.buildQuestionShoe();
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
-    controller.getCharacterInfo();
+    controller.buildCharacterInfo();
 }
 
 function addClickHandlers(game, view, controller){
@@ -31,7 +31,9 @@ function addClickHandlers(game, view, controller){
     });
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        $('.readyBanner').slideUp()
+        $('.readyBanner').fadeOut()
+        console.log(game.roundTime);
+        view.renderTimer(game.roundTime);
     });
 }
 
@@ -77,11 +79,12 @@ function GameModel(){
             categoryID: '9',
             heroID: '644'
         },
-        'libertybelle' : {
-            name: 'Liberty Belle',
+        'magneto' : {
+            name: 'Magneto',
             img: 'liberty-belle.png',
             category: "History",
-            categoryID: '19'
+            categoryID: '19',
+            heroID: '423'
         },
         'thething' : {
             name: 'The Thing',
@@ -155,7 +158,6 @@ function GameModel(){
         }
     };
 
-
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
         this.players[this.turn] = new Player(character, this);
@@ -215,17 +217,19 @@ function View(model){
         //add the win quote for the character to the win modal
         //show the win modal
     };
+
     var controller=null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
     };
+
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         // this'll take qbank question array as a parameter
-        console.log('****start of function + ',qArray);
+        // console.log('****start of function + ',qArray);
         $('.answer').remove();
         var entry = qArray.shift();
-        console.log('****after shift + ',qArray);
+        // console.log('****after shift + ',qArray);
         var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
@@ -237,13 +241,14 @@ function View(model){
             text: category,
             'class': 'category'
         });
-        console.log('****after after span creation ',qArray);
+        // console.log('****after after span creation ',qArray);
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        console.log('****after appending + ',qArray);
+        // console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
+
             //wincheckstate & player change
             if(model.turn===1){
                 $('.readyButton span').text('P2')
@@ -255,6 +260,7 @@ function View(model){
         }
 
     };
+
     this.createAnsDiv=function(num,text, entry){
         var ansDiv= $('<div>',{
             id: 'q'+num,
@@ -270,6 +276,7 @@ function View(model){
         }
         $('.answerContainer').append(ansDiv)
     };
+
     this.renderDmg = function(amount){
         if(model.turn === 1){
             currentHpBar = $('.right');
@@ -316,8 +323,14 @@ function View(model){
                     var characterImg = $(event.target).attr('id');
                     if (model.turn === 1) {
                         $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                        $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
+                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
                     } else {
                         $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                        $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
+                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
                     }
                 }
             }, function () {
@@ -329,20 +342,28 @@ function View(model){
             });
         }
 
-    // this.handlePlayerInfoOnHover = function(){
-    //     $('.playerAvatar').hover(function () {
-    //         if (model.bothPlayersSelected === false) {
-    //             var characterInfo = $(event.target).attr('id');
-    //             if (model.turn === 1) {
-    //
-    //             }
-    //         }
-    //     })
-    // }
-    this.renderHeroInArena = function(players){
+    this.renderHeroInArena = function(players){   //renders each players img to main game board arena
         console.log('it works')
-        $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")').addClass('playerContainerLeft');
+        $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
+    }
+
+    this.renderTimer = function(startTime){   // renders the timer for each player
+        console.log('render timer works');
+        console.log('round time', model.roundTime);
+
+        var timer = setInterval(function(){
+
+            var timeLeft = startTime - 1;
+
+            $('.currentTime').text(timeLeft);
+
+            if(timeLeft === 0){
+                console.log('times up');
+                clearInterval(timer);
+
+            }
+        }, 1000)
     }
 
 }
@@ -489,19 +510,25 @@ function Controller(model,view){
 
       };
 
-    this.getCharacterInfo = function () {
-        for (var key in model.availableCharacters){
-            $.ajax({
-                method: 'get',
-                url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[key].heroID,
-                dataType: 'json',
-                success: function (data) {
-                    console.log(model.availableCharacters[key] = data);
-                },
-                error: function () {
-                    console.log('something went wrong');
-                }
-            });
+
+    this.getCharacterInfo = function (character) {
+        $.ajax({
+            method: 'get',
+            url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[character].heroID,
+            dataType: 'json',
+            success: function (data) {
+                model.availableCharacters[character].characterInfo = data;
+            },
+            error: function () {
+                console.log('something went wrong');
+            }
+        });
+
+    };
+
+    this.buildCharacterInfo = function() {
+        for (var character in model.availableCharacters) {
+            this.getCharacterInfo(character);
         }
     };
 
@@ -515,7 +542,7 @@ function Controller(model,view){
                 var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
                 var chuckNorrisQuote = quote.value;
                 var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
-                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen')) //makes font tag to change color of the name
+                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
                 $('.chuckNorrisQuote p').append(greenTxt);
 
                 $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')

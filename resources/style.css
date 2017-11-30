@@ -171,7 +171,6 @@ h1 {
     display: inline-block;
     width: 15vmin;
     height: 15vmin;
-    background-color: red;
     cursor: pointer;
 }
 
@@ -469,6 +468,7 @@ h1 {
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 100%;
     transform: translate(-50%, -50%);
     font-size: 5vmin;
     font-family: fighting;
@@ -486,7 +486,7 @@ h1 {
 .restart {
     top: 70%;
     left: 70%;
-    width: 20vw;
+    /*width: 20vw;*/
     height: 10vh;
     position: absolute;
 }
@@ -503,7 +503,7 @@ h1 {
     border: 0px solid;
     /*border: 1px solid black;*/
     /*border-radius: 20px;*/
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
     font-family: ss4;
     font-size: 5vmin;
