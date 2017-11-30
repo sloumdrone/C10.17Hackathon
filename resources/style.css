@@ -341,15 +341,20 @@ h1 {
     border: 1px solid;
     position: absolute;
     top: 58%;
-    transform: translate(-50%, -50%);
+    background-image: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
 }
 
 .player1 {
     left: 13vw;
+    transform: translate(-50%, -50%) scaleX(-1);
 }
 
 .player2 {
     left: 87vw;
+    transform: translate(-50%, -50%);
 }
 
 .questionModal {
@@ -422,7 +427,7 @@ h1 {
     position: absolute;
     transform: scaleX(-1);
     animation: spin 4s infinite;
-    animation-timing-function: cubic-bezier(0.1, 0.1, 0.2, 1.5);
+    animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1.5);
     animation-iteration-count: 1;
     transform-style: preserve-3d;
     background-repeat: no-repeat;
@@ -434,7 +439,7 @@ h1 {
 @keyframes spin{
 
     from {transform: rotateY(0deg)}
-    to {transform: rotateY(5400deg)}
+    to {transform: rotateY(540deg)}
 
 }
 

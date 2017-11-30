@@ -308,6 +308,7 @@ function View(model){
               // add function that triggers game start/load screen
             }
         })
+        this.renderHeroInArena(model.players);
     };
 
     this.handleAvatarHover = function (){
@@ -339,6 +340,11 @@ function View(model){
     //         }
     //     })
     // }
+    this.renderHeroInArena = function(players){
+        console.log('it works')
+        $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")').addClass('playerContainerLeft');
+        $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
+    }
 
 }
 
