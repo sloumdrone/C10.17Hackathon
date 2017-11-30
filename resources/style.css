@@ -16,6 +16,7 @@ body {
     overflow: hidden;
 }
 
+
 /*****************  player selection modal ******************/
 
 .modalContainer {
@@ -185,6 +186,8 @@ body {
     height: 100vh;
     width: 100vw;
     display: none;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .hitPoints {
@@ -193,6 +196,7 @@ body {
   background-color: red;
   background-image: url('https://media.giphy.com/media/lDKVeTHWDPSuc/giphy.gif');
   background-repeat: repeat;
+  background-position: center;
 }
 
 .statsContainer {
@@ -305,6 +309,10 @@ body {
     width: 100vw;
     border: 1px solid black;
     display: none;
+    background-image: url('images/background6.gif');
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
 
 }
 
@@ -317,13 +325,25 @@ body {
     top: 10%;
     left: 10%;
     width: 25vw;
-    height: 70vh;
+    height: 80vh;
     border: 1px solid;
+    border-radius: 6%;
     position: absolute;
-    background-image: url("images/characters/batman.png");
+    animation: spin 4s infinite;
+    animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1.2);
+    animation-iteration-count: 1;
+    transform-style: preserve-3d;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+    background-color: rgba(0,0,0,0.6);
+}
+
+@keyframes spin{
+
+    from {transform: rotateY(0deg)}
+    to {transform: rotateY(360deg)}
+
 }
 
 .winningCharacter img{
@@ -333,31 +353,64 @@ body {
 }
 
 .chuckNorrisQuote{
-    top: 35%;
+    top: 25%;
     left: 40%;
     width: 50vw;
-    height: 30vh;
+    height: 40vh;
     border: 1px solid;
+    border-radius: 20px;
     position: absolute;
+    background-color: rgba(0,0,0,0.6);
+    padding: 1%;
+
 }
 
-.chuckNorrisQuote p{
-    margin: 0 auto;
+.chuckNorrisQuote p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 5vmin;
+    font-family: fighting;
+    color: white;
+    letter-spacing: 2px;
+    text-align: center;
+    margin: 0;
 }
+
+/*.chuckNorrisQuote p{*/
+    /*margin: 0 auto;*/
+    /**/
+/*}*/
 
 .restart {
-    border: 1px solid black;
     top: 70%;
-    left: 80%;
-    width: 10vw;
-    height: 5vh;
+    left: 70%;
+    width: 20vw;
+    height: 10vh;
     position: absolute;
+}
+
+.playAgain:focus{
+    outline: none;
+}
+
+.playAgain:active{
+    transform: translateY(5px);
 }
 
 .playAgain{
+    border: 0px solid;
+    /*border: 1px solid black;*/
+    /*border-radius: 20px;*/
     width: 100%;
     height: 100%;
+    font-family: ss4;
+    font-size: 5vmin;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    box-shadow: none;
+    text-shadow: 0px 0px 20px black;
 }
 
 /*********************** Ready modal ************************/

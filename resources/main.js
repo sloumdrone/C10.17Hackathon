@@ -59,7 +59,13 @@ function GameModel(){
         delete this.setView;
     };
 
-
+    this.backgrounds = [
+      'sewers.gif',
+      'water-fall.gif',
+      'wood-ruins.gif',
+      'mansion.gif',
+      'over-pass.gif'
+    ]
 
     this.availableCharacters = {
         'superman' : {
@@ -71,13 +77,13 @@ function GameModel(){
         'libertybelle' : {
             name: 'Liberty Belle',
             img: 'liberty-belle.png',
-            category: 'Math',
+            category: "History",
             categoryID: '19'
         },
         'thething' : {
             name: 'The Thing',
             img: 'thing.png',
-            category: 'Computers',
+            category: "Science & Nature",
             categoryID: '18'
         },
         'mrfantastic' : {
@@ -89,7 +95,7 @@ function GameModel(){
         'batman' : {
             name: 'Batman',
             img: 'batman.png',
-            category: 'Gadgets',
+            category: "Science: Gadgets",
             categoryID: '9'
         },
         'ironman' : {
@@ -107,13 +113,13 @@ function GameModel(){
         'nightcrawler' : {
             name: 'Nightcrawler',
             img: 'nightcrawler.png',
-            category: 'Video Games',
+            category: "Entertainment: Video Games",
             categoryID: '15'
         },
         'wonderwoman' : {
             name: 'wonderwoman',
             img: 'wonderwoman.png',
-            category: 'Animals',
+            category: "Art",
             categoryID: '27'
         },
         'juggernaut' : {
@@ -125,16 +131,16 @@ function GameModel(){
         'mrsinister' : {
             name: 'Mr. Sinister',
             img: 'mr-sinister.png',
-            category: 'History',
+            category: "Science & Nature",
             categoryID: '23'
         },
         'robin' : {
             name: 'Robin',
             img: 'robin.png',
-            category: 'Comics',
+            category: "Entertainment: Comics",
             categoryID: '29'
         }
-    }
+    };
 
 
     this.addPlayer = function(character){
@@ -219,21 +225,22 @@ function View(model){
         });
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
-            this.createAnsDiv(ans_i, correctAns, ansList[ans_i], category);
+            this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
         if(model.questionsLeft===0){
             //wincheckstate & player change
             controller.winCheck();
         }
     };
-    this.createAnsDiv=function(num, answer, text, category){
+    this.createAnsDiv=function(num,text, entry){
         var ansDiv= $('<div>',{
             id: 'q'+num,
             'class': 'answer',
             text: controller.domParser(text)
         });
-        ansDiv[0].category = category;
-        if(text!==answer){ //stores correct and incorrect properties inside the DOM element
+        ansDiv[0].difficulty = entry.difficulty;
+        ansDiv[0].category = entry.category;
+        if(text!==entry.correct_answer){ //stores correct and incorrect properties inside the DOM element
             ansDiv[0].answer= 'incorrect';
         }else{
             ansDiv[0].answer = 'correct'
@@ -243,21 +250,24 @@ function View(model){
     this.renderDmg = function(amount){
         var percent = amount/100;//get percent equivalent of the dmg
         var hpBar=null;
-        var remainingHp=null;
+        var hp=null;
         var dmg=null;
+        var remainingHp=null
         if(model.turn === 1){
             hpBar = $('.right');
 
         }else{
             hpBar = $('.left')
         }
-        remainingHp = hpBar.css('width')
-        if(remainingHp-amount<0){
-            dmg=0;
+        var hpBar2 = hpBar.css('width');
+        hp = parseInt(hpBar2.substring(0,hpBar2.indexOf('p')));
+        dmg = Math.round(hp*percent);
+        if(hp-dmg<0){
+            remainingHp=0;
         }else{
-            dmg=remainingHp-amount
+            remainingHp=hp-dmg
         }
-        hpBar.css('width', dmg+"%") //reduces the width by the percentage of the dmg.
+        hpBar.css('width', remainingHp+"px") //reduces the width by the percentage of the dmg.
     };
 
   //
@@ -271,14 +281,18 @@ function View(model){
     };
 
     this.activePlayButton = function(){
+
         model.playButtonClickable = true;
         $('.playButton').click(function(){
             if(model.playButtonClickable) {
               model.playButtonClickable = false;
               model.avatarClickable = false;
-              $('.modalContainer').fadeOut(1500);
-              $('.gameBoard').fadeIn(3000);
+
+
+              $('.modalContainer').fadeOut(3000);
+              $('.gameBoard').fadeIn(1500);
               $('.readyBanner').slideDown('slow');
+
               // add function that triggers game start/load screen
             }
         })
@@ -338,7 +352,7 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
-  }
+  };
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
       if(boolean){
@@ -346,23 +360,23 @@ function Controller(model,view){
       }
       switch (difficulty){
           case 'easy':
-              damagePercent+=4;
+              damagePercent+=20;
               break;
           case 'medium':
-              damagePercent+=8;
+              damagePercent+=25;
               break;
           case 'hard':
-              damagePercent+=12;
+              damagePercent+=30;
               break;
       }
       return damagePercent
-  }
+  };
 
     var view = null;
     this.setView = function (viewer) {
         view = viewer;
         delete this.setView;
-    }
+    };
 
 
   this.getSessionToken = function(){
@@ -384,11 +398,11 @@ function Controller(model,view){
               console.log('error input');
           }
       });
-  }
+  };
 
   this.checkWinState = function() {
       if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-          model.clickable = false;
+          model.clickable = false;//fix this, it is no longer a valid variable name
           model.gameState = 'endgame';
           view.showEndgameWinner();
       } else {
@@ -397,9 +411,10 @@ function Controller(model,view){
           } else {
               model.turn -= 1;
           }
+          $('.readyBanner').slideDown('slow');
           controller.questionBank(model.questions)
       }
-  }
+  };
 
       this.retrieveQuestions = function (diff) {
           $.ajax({
@@ -424,8 +439,7 @@ function Controller(model,view){
                   console.log('error input')
               }
           });
-      }
-
+      };
       this.buildQuestionShoe = function () {
           console.log('build shoe');
           var difficulty = ['easy', 'medium', 'hard'];
@@ -458,15 +472,40 @@ function Controller(model,view){
             });
         };
 
+
+    this.getQuote = function(winner, winnerImg){
+        $.ajax({
+            method: 'get',
+            url: 'https://api.chucknorris.io/jokes/random',
+            dataType: 'json',
+            success: function(quote){
+                console.log('original', quote.value);
+                var regEx = new RegExp('chuck norris', 'ig');
+                var chuckNorrisQuote = quote.value;
+                var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+                $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
+
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
+                console.log('winnerQuote',winnerQuote);
+                return winnerQuote;
+            },
+            error: function(){
+                console.log('something went wrong!')
+            }
+        });
+    }
+
+
       this.selectAnswer = function (element) {
         console.log('hey select answer here', element.answer); //delete me after a while
+
           var specialty = false;
 
           if (element.answer === 'correct') {
-              if (element.category === model.player[model.turn].character.category) {
+              if (element.category === model.players[model.turn].character.category) {
                   specialty = true;
-                  this.dealDamage(this.dmgCalculator(difficulty, specialty))
               }
+              this.dealDamage(this.dmgCalculator(element.difficulty, specialty));
           }
           view.renderQuestion(model.questionBank);
       };
