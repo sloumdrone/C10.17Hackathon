@@ -398,8 +398,8 @@ h1 {
     border-radius: 5vmin;
 
     /* Lori added opacity, Brian added opacity on the bgcolor...see if they play nicely together then remove comment */
-    /*opacity: 0;
-    transition: 0.75s;*/
+    opacity: 0;
+    transition: 0.75s;
 }
 
 

@@ -290,7 +290,7 @@ function View(model){
         }else{
             ansDiv[0].answer = 'correct'
         }
-        $('.answerContainer').append(ansDiv)
+        $('.questionModal').append(ansDiv)
     };
 
     this.renderDmg = function(amount){
