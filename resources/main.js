@@ -280,7 +280,6 @@ function View(model){
             $('.playerAvatar').hover(function () {
                 if (model.bothPlayersSelected === false) {
                     var characterImg = $(event.target).attr('id');
-                    console.log(characterImg);
                     if (model.turn === 1) {
                         $('.playerContainerLeft').addClass('playerPhotoLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     } else {
@@ -295,7 +294,6 @@ function View(model){
                 }
             });
         }
-
 
 }
 
