@@ -270,9 +270,13 @@ function View(model){
         model.playButtonClickable = true;
         $('.playButton').click(function(){
             if(model.playButtonClickable) {
-                console.log('start game');
-                // add function that triggers game start/load screen
-                model.playButtonClickable = false;
+              model.playButtonClickable = false;
+              model.avatarClickable = false;
+              $('.modalContainer').fadeOut(1500);
+              $('.gameBoard').fadeIn(3000);
+              $('.readyBanner').slideDown('slow');
+              // add function that triggers game start/load screen
+
             }
         })
     }
