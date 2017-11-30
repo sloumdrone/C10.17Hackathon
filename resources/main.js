@@ -12,11 +12,11 @@ function initialize(){
     view.setController(controller);
     controller.setView(view);
     controller.buildQuestionShoe();
-    addClickHandlers(game, view);
+    addClickHandlers(game, view,controller);
     view.handleAvatarHover();
 }
 
-function addClickHandlers(game, view, player, controller){
+function addClickHandlers(game, view, controller){
     $('.playerAvatar').click(function(){
         if (game.avatarClickable){
             console.log(game.turn);
@@ -26,8 +26,11 @@ function addClickHandlers(game, view, player, controller){
         }
     });
     $('.questionModal').on('click', '.answer', function(){
-        controller.selectAnswer(this)
-    })
+        controller.selectAnswer(this, view)
+    });
+    $('.readyButton').on('click',function(){
+        controller.questionBank(game.questions)
+    });
 }
 
 
@@ -44,17 +47,17 @@ function GameModel(){
         //1 : Player {}
         //2 : Player {}
         //built using the add
-    }
+    };
     var controller = null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
-    }
+    };
     var view = null;
     this.setView = function(viewer){
         view = viewer;
         delete this.setView;
-    }
+    };
 
 
 
@@ -201,6 +204,7 @@ function View(model){
     };
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         // this'll take qbank question array as a parameter
+        $('.answer').remove();
         var entry = qArray.shift();
         var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
@@ -222,7 +226,7 @@ function View(model){
             controller.winCheck();
         }
     };
-    this.createAnsDiv=function(num, answer, text){
+    this.createAnsDiv=function(num, answer, text, category){
         var ansDiv= $('<div>',{
             id: 'q'+num,
             'class': 'answer',
@@ -254,7 +258,7 @@ function View(model){
             dmg=remainingHp-amount
         }
         hpBar.css('width', dmg+"%") //reduces the width by the percentage of the dmg.
-    }
+    };
 
   //
   // this.addOutlineToSelectedPlayer = function(){
@@ -264,7 +268,7 @@ function View(model){
 
     this.addOutlineToSelectedPlayer = function(){
         $(event.target).addClass('playerAvatarClicked');
-    }
+    };
 
     this.activePlayButton = function(){
         model.playButtonClickable = true;
@@ -279,7 +283,7 @@ function View(model){
 
             }
         })
-    }
+    };
 
     this.handleAvatarHover = function (){
             $('.playerAvatar').hover(function () {
@@ -305,25 +309,26 @@ function View(model){
 
 function Controller(model,view){
 
-    this.questionBank = function(questionsArrMain){
+    this.questionBank = function(questionsObj){
         var qBank = [];
-        for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
-            var maxQ = 2;
-            if(questionsArrMain[main_i]==='easy'){
-                maxQ=3
+        for(key in questionsObj){
+            // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
+                var maxQ = 2;
+                if(key==='easy'){
+                    maxQ=3
+                }
+                for(var sub_i=0;sub_i<maxQ;sub_i++){
+                    var qEntry = questionsObj[key].shift();
+                    var qA = {
+                        question: qEntry.question,
+                        category: qEntry.category,
+                        difficulty: qEntry.difficulty,
+                        correct_answer: qEntry.correct_answer,
+                        incorrect_answers: [qEntry.incorrect_answers[0],qEntry.incorrect_answers[1],qEntry.incorrect_answers[2]]
+                    };
+                    qBank.push(qA)
+                }
             }
-            for(var sub_i=0;sub_i<maxQ;sub_i++){
-                var qEntry = questionsArrMain[main_i].shift();
-                var qA = {
-                    question: qEntry.question,
-                    category: qEntry.category,
-                    difficulty: qEntry.difficulty,
-                    correct_answer: qEntry.correct_answer,
-                    incorrect_answers: [qEntry.incorrect_answers[0],qEntry.incorrect_answers[1],qEntry.incorrect_answers[2]]
-                };
-                qBank.push(qA)
-            }
-        }
         model.questionBank = qBank;
         view.renderQuestion(model.questionBank);
     };
@@ -411,8 +416,7 @@ function Controller(model,view){
               success: function (data) {
                   if (data.response_code === 0) {
                       model.questions[diff] = data.results;
-                      x = data.results;
-                      console.log('finished ' + diff ,  x);
+                      console.log('finished ' + diff );
                   } else {
                       alert('Issue with question retrieval. Response code: ' + data.response_code);
                   }
@@ -455,16 +459,17 @@ function Controller(model,view){
             });
         };
 
-      this.selectAnswer = function (element, difficulty) {
-        console.log('hey select answer here'); //delete me after a while
+      this.selectAnswer = function (element) {
+        console.log('hey select answer here', element.answer); //delete me after a while
           var specialty = false;
+
           if (element.answer === 'correct') {
-              if (element.category === model.player[mode.turn].character.category) {
+              if (element.category === model.player[model.turn].character.category) {
                   specialty = true;
                   this.dealDamage(this.dmgCalculator(difficulty, specialty))
               }
           }
-          view.renderQuestions(model.questionBank);
+          view.renderQuestion(model.questionBank);
       };
       this.domParser = function (input) {
           var doc = new DOMParser().parseFromString(input, "text/html");
