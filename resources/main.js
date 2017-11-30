@@ -3,7 +3,6 @@
 $(document).ready(initialize)
 
 function initialize(){
-
     var game = new GameModel();
     var view = new View(game);
     var controller = new Controller(game);
@@ -130,7 +129,7 @@ function GameModel(){
         },
         'wonderwoman' : {
             name: 'wonderwoman',
-            img: 'wonderwoman.png',
+            img: 'wonder-woman.png',
             category: "Art",
             categoryID: '27',
             heroID: '720'
@@ -332,12 +331,12 @@ function View(model){
                         $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                         $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                         $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
+                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                     } else {
                         $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                         $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                         $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
+                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                     }
                 }
             }, function () {

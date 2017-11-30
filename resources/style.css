@@ -84,10 +84,10 @@ body {
 
 .playerContainerRight {
     right: 0%;
+    transform: scaleX(-1);
 }
 
 .playerContainerLeft {
-    transform: scaleX(-1);
     /*rotateY(135deg);*/
     /*-webkit-transform: rotateY(135deg); !* Safari *!*/
     /*transform: rotateY(180deg);*/
@@ -348,12 +348,12 @@ h1 {
 
 .player1 {
     left: 13vw;
-    transform: translate(-50%, -50%) scaleX(-1);
+    transform: translate(-50%, -50%);
 }
 
 .player2 {
     left: 87vw;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scaleX(-1);
 }
 
 .questionModal {
