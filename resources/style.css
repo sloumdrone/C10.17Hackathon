@@ -188,6 +188,8 @@ body {
   width: 100%;
   height: 100%;
   background-color: red;
+  background-image: url('https://media.giphy.com/media/lDKVeTHWDPSuc/giphy.gif');
+  background-repeat: repeat;
 }
 
 .statsContainer {
@@ -209,7 +211,6 @@ body {
 
 .hitPointsContainerRight {
     right: 0.5vw;
-    transition: 2s;
 }
 
 .timer {
@@ -223,8 +224,16 @@ body {
     font-family: fighting;
     background-color: white;
     color: blue;
-    font-size: 4vh;
+    font-size: 8vh;
     text-align: center;
+}
+
+.currentTime {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: inline-block;
 }
 
 .player1, .player2 {
@@ -308,7 +317,7 @@ body {
     height: 70vh;
     border: 1px solid;
     position: absolute;
-    /*background-image: url("images/characters/batman.png");*/
+    background-image: url("images/characters/batman.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
