@@ -14,6 +14,7 @@ function initialize(){
     controller.buildQuestionShoe();
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
+    controller.getCharacterInfo();
 }
 
 function addClickHandlers(game, view, controller){
@@ -29,7 +30,8 @@ function addClickHandlers(game, view, controller){
         controller.selectAnswer(this, view)
     });
     $('.readyButton').on('click',function(){
-        controller.questionBank(game.questions)
+        controller.questionBank(game.questions);
+        $('.readyBanner').fadeOut()
     });
 }
 
@@ -41,7 +43,7 @@ function GameModel(){
     this.bothPlayersSelected = false;
     this.turn = 1;
     this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-    this.questionsLeft = 10; //tracks the number of questions asked
+    // this.questionsLeft = 10; //tracks the number of questions asked
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -65,14 +67,15 @@ function GameModel(){
       'wood-ruins.gif',
       'mansion.gif',
       'over-pass.gif'
-    ]
+    ];
 
     this.availableCharacters = {
         'superman' : {
             name: 'Superman',
             img: 'superman.png',
             category: 'General Knowledge',
-            categoryID: '9'
+            categoryID: '9',
+            heroheroID: '644'
         },
         'libertybelle' : {
             name: 'Liberty Belle',
@@ -84,61 +87,71 @@ function GameModel(){
             name: 'The Thing',
             img: 'thing.png',
             category: "Science & Nature",
-            categoryID: '18'
+            categoryID: '18',
+            heroID: '658'
         },
         'mrfantastic' : {
             name: 'Mr. Fantastic',
             img: 'mr-fantastic.png',
             category: 'Computers',
-            categoryID: '18'
+            categoryID: '18',
+            heroID: '456'
         },
         'batman' : {
             name: 'Batman',
             img: 'batman.png',
             category: "Science: Gadgets",
-            categoryID: '9'
+            categoryID: '9',
+            heroID: '70'
         },
         'ironman' : {
             name: 'Iron Man',
             img: 'iron-man.png',
             category: 'Vehicles',
-            categoryID: '28'
+            categoryID: '28',
+            heroID: '346'
         },
         'thor' : {
             name: 'Thor',
             img: 'thor.png',
             category: 'Mythology',
-            categoryID: '20'
+            categoryID: '20',
+            heroID: '659'
         },
         'nightcrawler' : {
             name: 'Nightcrawler',
             img: 'nightcrawler.png',
             category: "Entertainment: Video Games",
-            categoryID: '15'
+            categoryID: '15',
+            heroID: '490'
         },
         'wonderwoman' : {
             name: 'wonderwoman',
             img: 'wonderwoman.png',
             category: "Art",
-            categoryID: '27'
+            categoryID: '27',
+            heroID: '720'
         },
         'juggernaut' : {
             name: 'Juggernaut',
             img: 'juggernaut.png',
             category: 'Sports',
-            categoryID: '21'
+            categoryID: '21',
+            heroID: '374'
         },
         'mrsinister' : {
             name: 'Mr. Sinister',
             img: 'mr-sinister.png',
             category: "Science & Nature",
-            categoryID: '23'
+            categoryID: '23',
+            heroID: '460'
         },
         'robin' : {
             name: 'Robin',
             img: 'robin.png',
             category: "Entertainment: Comics",
-            categoryID: '29'
+            categoryID: '29',
+            heroID: '561'
         }
     };
 
@@ -173,8 +186,6 @@ function Player(characterSelection, game){
     }
 
 }
-
-
 
 function View(model){
   //all of our functions for updating the view will go here
@@ -218,7 +229,7 @@ function View(model){
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
-        model.questionsLeft--;
+        // model.questionsLeft--;
         var catSpan = $('<span>',{
             text: category,
             'class': 'category'
@@ -227,9 +238,9 @@ function View(model){
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        if(model.questionsLeft===0){
+        if(model.questionBank.length===0){
             //wincheckstate & player change
-            controller.winCheck();
+            controller.checkWinState();
         }
     };
     this.createAnsDiv=function(num,text, entry){
@@ -287,6 +298,7 @@ function View(model){
             if(model.playButtonClickable) {
               model.playButtonClickable = false;
               model.avatarClickable = false;
+              model.turn = 1;
 
 
               $('.modalContainer').fadeOut(3000);
@@ -337,9 +349,9 @@ function Controller(model,view){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
-                var maxQ = 2;
+                var maxQ = 3;
                 if(key==='easy'){
-                    maxQ=3
+                    maxQ=4
                 }
                 for(var sub_i=0;sub_i<maxQ;sub_i++){
                     var qEntry = questionsObj[key].shift();
@@ -363,7 +375,14 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
+    if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
+        this.checkWinState();
+    }else{
+        view.renderQuestion(model.questionBank)
+    }
+
   };
+
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
       if(boolean){
@@ -423,7 +442,7 @@ function Controller(model,view){
               model.turn -= 1;
           }
           $('.readyBanner').slideDown('slow');
-          controller.questionBank(model.questions)
+          this.questionBank(model.questions)
       }
   };
 
@@ -461,55 +480,47 @@ function Controller(model,view){
 
       };
 
-        this.getQuote = function(winner, winnerImg){
+    this.getCharacterInfo = function () {
+        for (var key in model.availableCharacters){
             $.ajax({
                 method: 'get',
-                url: 'https://api.chucknorris.io/jokes/random',
+                url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[key].heroID,
                 dataType: 'json',
-                success: function(quote){
-                    console.log('original', quote.value);
-                    var regEx = new RegExp('chuck norris', 'ig');
-                    var chuckNorrisQuote = quote.value;
-                    var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                    $('.chuckNorrisQuote p').text(winnerQuote);
-
-                    $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-                    console.log('winnerQuote',winnerQuote);
-                    return winnerQuote;
+                success: function (data) {
+                    console.log(model.availableCharacters[key] = data);
                 },
-                error: function(){
-                    console.log('something went wrong!')
+                error: function () {
+                    console.log('something went wrong');
                 }
             });
-        };
+        }
+    }
 
-    // this.getQuote = function(winner, winnerImg){
-    //     $.ajax({
-    //         method: 'get',
-    //         url: 'https://api.chucknorris.io/jokes/random',
-    //         dataType: 'json',
-    //         success: function(quote){
-    //             console.log('original', quote.value);
-    //             var regEx = new RegExp('chuck norris', 'ig');
-    //             var chuckNorrisQuote = quote.value;
-    //             var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-    //             $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
-    //
-    //             $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-    //             console.log('winnerQuote',winnerQuote);
-    //             return winnerQuote;
-    //         },
-    //         error: function(){
-    //             console.log('something went wrong!')
-    //         }
-    //     });
+    this.getQuote = function(winner, winnerImg) {
+        $.ajax({
+            method: 'get',
+            url: 'https://api.chucknorris.io/jokes/random',
+            dataType: 'json',
+            success: function (quote) {
+                console.log('original', quote.value);
+                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                var chuckNorrisQuote = quote.value;
+                var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
+                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen')) //makes font tag to change color of the name
+                $('.chuckNorrisQuote p').append(greenTxt);
 
-
-    // }
-
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')
+                console.log('winnerQuote', winnerQuote);
+                return winnerQuote;
+            },
+            error: function () {
+                console.log('something went wrong!')
+            }
+        });
+    }
 
       this.selectAnswer = function (element) {
-        console.log('hey select answer here', element.answer); //delete me after a while
+        console.log('hey select answer here', element.answer, model.turn); //delete me after a while
 
           var specialty = false;
 

@@ -83,7 +83,6 @@ body {
 }
 
 .playerContainerRight {
-    position: absolute;
     right: 0%;
 }
 
@@ -414,28 +413,28 @@ h1 {
 }
 
 
+
 .winningCharacter{
     top: 10%;
     left: 10%;
     width: 25vw;
     height: 80vh;
-    border: 1px solid;
-    border-radius: 6%;
     position: absolute;
+    transform: scaleX(-1);
     animation: spin 4s infinite;
-    animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1.2);
+    animation-timing-function: cubic-bezier(0.1, 0.1, 0.2, 1.5);
     animation-iteration-count: 1;
     transform-style: preserve-3d;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    background-color: rgba(0,0,0,0.6);
+
 }
 
 @keyframes spin{
 
     from {transform: rotateY(0deg)}
-    to {transform: rotateY(360deg)}
+    to {transform: rotateY(5400deg)}
 
 }
 
