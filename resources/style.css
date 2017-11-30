@@ -57,6 +57,9 @@ body {
 
 .playerContainerLeft {
     transform: scaleX(-1);
+    /*rotateY(135deg);*/
+    /*-webkit-transform: rotateY(135deg); !* Safari *!*/
+    /*transform: rotateY(180deg);*/
 }
 
 .playerPhotoLeft {
