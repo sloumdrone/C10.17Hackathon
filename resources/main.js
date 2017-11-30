@@ -31,7 +31,7 @@ function addClickHandlers(game, view, controller){
     });
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        game.roundTime=21;
+        game.roundTime=60;
         view.renderTimer();
         $('.readyBanner').fadeOut();
         // console.log(game.roundTime);
@@ -46,7 +46,7 @@ function GameModel(){
     this.playButtonClickable = false;
     this.bothPlayersSelected = false;
     this.turn = 1;
-    this.roundTime = 21; //just a starting number, tracks amount of time left in round;
+    this.roundTime = 60; //just a starting number, tracks amount of time left in round;
     // this.questionsLeft = 10; //tracks the number of questions asked
     this.roundTimer = null;
     this.questions = {};
@@ -178,13 +178,10 @@ function GameModel(){
     }
 }
 
-
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
-    this.domHitPoints = $('.hitPoints').css('width');
     this.character = game.availableCharacters[characterSelection];
     this.trivia = {}; //object of arrays of objects
-
     this.getWinQuote = function(characterName){
         //calls chuck norris api
         //replaces chuck norris with character characterName
@@ -379,6 +376,10 @@ function Controller(model,view){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
+            if(questionsObj[key].length<10){
+                this.checkWinState(questionsObj[key]);
+                return;
+            }
                 var maxQ = 3;
                 if(key==='easy'){
                     maxQ=4
@@ -465,8 +466,17 @@ function Controller(model,view){
   };
 
   this.checkWinState = function() {
+      if(model.questions['easy'].length<10 ||model.questions['medium'].length<10 ||model.questions['hard'].length<10){
+          if(model.players[1].hitPoints>model.players[2]){
+              model.gameState = 'endgame';
+              model.players[2].hitPoints=0;
+              view.showEndgameWinner()
+          }else{
+              model.players[1].hitPoints=0;
+              view.showEndgameWinner()
+          }
+      }
       if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-          model.clickable = false;//fix this, it is no longer a valid variable name
           model.gameState = 'endgame';
           view.showEndgameWinner();
       } else {
