@@ -14,6 +14,8 @@ function initialize(){
     addClickHandlers(game, view);
     view.handleAvatarHover();
     controller.buildQuestionShoe();
+
+    var background = game.backgrounds[Math.floor(Math.random()*game.backgrounds.length)];
 }
 
 function addClickHandlers(game, view, player, controller){
@@ -56,7 +58,13 @@ function GameModel(){
         delete this.setView;
     }
 
-
+    this.backgrounds = [
+      'sewers.gif',
+      'water-fall.gif',
+      'wood-ruins.gif',
+      'mansion.gif',
+      'over-pass.gif'
+    ]
 
     this.availableCharacters = {
         'superman' : {
@@ -263,14 +271,18 @@ function View(model){
     }
 
     this.activePlayButton = function(){
+
         model.playButtonClickable = true;
         $('.playButton').click(function(){
             if(model.playButtonClickable) {
               model.playButtonClickable = false;
               model.avatarClickable = false;
-              $('.modalContainer').fadeOut(1500);
-              $('.gameBoard').fadeIn(3000);
+
+
+              $('.modalContainer').fadeOut(3000);
+              $('.gameBoard').fadeIn(1500);
               $('.readyBanner').slideDown('slow');
+
               // add function that triggers game start/load screen
 
             }
@@ -357,7 +369,7 @@ function Controller(model,view){
 
   this.checkWinState = function() {
       if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-          model.clickable = false;
+          model.clickable = false;//fix this, it is no longer a valid variable name
           model.gameState = 'endgame';
           view.showEndgameWinner();
       } else {
@@ -366,6 +378,7 @@ function Controller(model,view){
           } else {
               model.turn -= 1;
           }
+          $('.readyBanner').slideDown('slow');
       }
   }
 

@@ -16,6 +16,7 @@ body {
     overflow: hidden;
 }
 
+
 /*****************  player selection modal ******************/
 
 .modalContainer {
@@ -165,6 +166,8 @@ body {
     height: 100vh;
     width: 100vw;
     display: none;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .hitPoints {
@@ -173,6 +176,7 @@ body {
   background-color: red;
   background-image: url('https://media.giphy.com/media/lDKVeTHWDPSuc/giphy.gif');
   background-repeat: repeat;
+  background-position: center;
 }
 
 .statsContainer {
