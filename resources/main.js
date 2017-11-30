@@ -75,7 +75,7 @@ function GameModel(){
             img: 'superman.png',
             category: 'General Knowledge',
             categoryID: '9',
-            heroheroID: '644'
+            heroID: '644'
         },
         'libertybelle' : {
             name: 'Liberty Belle',
@@ -93,7 +93,7 @@ function GameModel(){
         'mrfantastic' : {
             name: 'Mr. Fantastic',
             img: 'mr-fantastic.png',
-            category: 'Computers',
+            category: "Science: Computers",
             categoryID: '18',
             heroID: '456'
         },
@@ -314,6 +314,7 @@ function View(model){
               // add function that triggers game start/load screen
             }
         })
+        this.renderHeroInArena(model.players);
     };
 
     this.handleAvatarHover = function (){
@@ -345,6 +346,11 @@ function View(model){
     //         }
     //     })
     // }
+    this.renderHeroInArena = function(players){
+        console.log('it works')
+        $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")').addClass('playerContainerLeft');
+        $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
+    }
 
 }
 
@@ -381,7 +387,7 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
-    if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
+    if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
         this.checkWinState();
     }
 
