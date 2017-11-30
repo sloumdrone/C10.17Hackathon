@@ -107,9 +107,9 @@ function GameModel(){
             category: 'Video Games',
             categoryID: '15'
         },
-        'wolverine' : {
-            name: 'Wolverine',
-            img: 'wolverine.png',
+        'wonderwoman' : {
+            name: 'wonderwoman',
+            img: 'wonderwoman.png',
             category: 'Animals',
             categoryID: '27'
         },
@@ -266,8 +266,6 @@ function View(model){
         model.playButtonClickable = true;
         $('.playButton').click(function(){
             if(model.playButtonClickable) {
-                console.log('start game');
-                // add function that triggers game start/load screen
                 model.playButtonClickable = false;
             }
         })
