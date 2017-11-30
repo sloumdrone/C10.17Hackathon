@@ -30,7 +30,8 @@ function addClickHandlers(game, view, controller){
     });
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        $('.readyBanner').fadeOut()
+        $('.readyBanner').fadeOut();
+        $('.questionModal').css('opacity', '1');
         console.log(game.roundTime);
         view.renderTimer(game.roundTime);
     });
@@ -519,7 +520,7 @@ function Controller(model,view){
                 model.availableCharacters[character].characterInfo = data;
             },
             error: function () {
-                console.log('something went wrong');
+                console.warn('something went wrong');
             }
         });
 
