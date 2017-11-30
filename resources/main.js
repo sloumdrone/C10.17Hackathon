@@ -11,12 +11,12 @@ function initialize(){
     game.setView(view);
     view.setController(controller);
     controller.setView(view);
-    addClickHandlers(game, view);
-    view.handleAvatarHover();
     controller.buildQuestionShoe();
+    addClickHandlers(game, view,controller);
+    view.handleAvatarHover();
 }
 
-function addClickHandlers(game, view, player, controller){
+function addClickHandlers(game, view, controller){
     $('.playerAvatar').click(function(){
         if (game.avatarClickable){
             console.log(game.turn);
@@ -26,8 +26,11 @@ function addClickHandlers(game, view, player, controller){
         }
     });
     $('.questionModal').on('click', '.answer', function(){
-        controller.selectAnswer(this)
-    })
+        controller.selectAnswer(this, view)
+    });
+    $('.readyButton').on('click',function(){
+        controller.questionBank(game.questions)
+    });
 }
 
 
@@ -44,17 +47,17 @@ function GameModel(){
         //1 : Player {}
         //2 : Player {}
         //built using the add
-    }
+    };
     var controller = null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
-    }
+    };
     var view = null;
     this.setView = function(viewer){
         view = viewer;
         delete this.setView;
-    }
+    };
 
 
 
@@ -193,32 +196,37 @@ function View(model){
         //wait a few seconds
         //add the win quote for the character to the win modal
         //show the win modal
-    }
+    };
     var controller=null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
-    }
-    this.renderQuestion = function(questions){ //renders Question and answers into Arena
-        var qArray = questions;
-        var entry = questions.shift(0);
+    };
+    this.renderQuestion = function(qArray){ //renders Question and answers into Arena
+        // this'll take qbank question array as a parameter
+        $('.answer').remove();
+        var entry = qArray.shift();
         var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
-        game.questionsLeft--;
+        model.questionsLeft--;
         var catSpan = $('<span>',{
             text: category,
             'class': 'category'
-        })
+        });
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i, correctAns, ansList[ans_i], category);
         }
-    }
-    this.createAnsDiv=function(num, answer, text){
+        if(model.questionsLeft===0){
+            //wincheckstate & player change
+            controller.winCheck();
+        }
+    };
+    this.createAnsDiv=function(num, answer, text, category){
         var ansDiv= $('<div>',{
             id: 'q'+num,
             'class': 'answer',
@@ -231,7 +239,7 @@ function View(model){
             ansDiv[0].answer = 'correct'
         }
         $('.questionModal').append(ansDiv)
-    }
+    };
     this.renderDmg = function(amount){
         var percent = amount/100;//get percent equivalent of the dmg
         var hpBar=null;
@@ -250,7 +258,7 @@ function View(model){
             dmg=remainingHp-amount
         }
         hpBar.css('width', dmg+"%") //reduces the width by the percentage of the dmg.
-    }
+    };
 
   //
   // this.addOutlineToSelectedPlayer = function(){
@@ -260,7 +268,7 @@ function View(model){
 
     this.addOutlineToSelectedPlayer = function(){
         $(event.target).addClass('playerAvatarClicked');
-    }
+    };
 
     this.activePlayButton = function(){
         model.playButtonClickable = true;
@@ -274,7 +282,7 @@ function View(model){
               // add function that triggers game start/load screen
             }
         })
-    }
+    };
 
     this.handleAvatarHover = function (){
             $('.playerAvatar').hover(function () {
@@ -299,6 +307,30 @@ function View(model){
 
 
 function Controller(model,view){
+
+    this.questionBank = function(questionsObj){
+        var qBank = [];
+        for(key in questionsObj){
+            // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
+                var maxQ = 2;
+                if(key==='easy'){
+                    maxQ=3
+                }
+                for(var sub_i=0;sub_i<maxQ;sub_i++){
+                    var qEntry = questionsObj[key].shift();
+                    var qA = {
+                        question: qEntry.question,
+                        category: qEntry.category,
+                        difficulty: qEntry.difficulty,
+                        correct_answer: qEntry.correct_answer,
+                        incorrect_answers: [qEntry.incorrect_answers[0],qEntry.incorrect_answers[1],qEntry.incorrect_answers[2]]
+                    };
+                    qBank.push(qA)
+                }
+            }
+        model.questionBank = qBank;
+        view.renderQuestion(model.questionBank);
+    };
 
 
   this.dealDamage = function(amount){
@@ -365,6 +397,7 @@ function Controller(model,view){
           } else {
               model.turn -= 1;
           }
+          controller.questionBank(model.questions)
       }
   }
 
@@ -382,7 +415,7 @@ function Controller(model,view){
               success: function (data) {
                   if (data.response_code === 0) {
                       model.questions[diff] = data.results;
-                      console.log('finished ' + diff);
+                      console.log('finished ' + diff );
                   } else {
                       alert('Issue with question retrieval. Response code: ' + data.response_code);
                   }
@@ -401,39 +434,42 @@ function Controller(model,view){
               this.retrieveQuestions(element);
           });
 
-      }
+      };
 
-    this.getQuote = function(winner, winnerImg){
-        $.ajax({
-            method: 'get',
-            url: 'https://api.chucknorris.io/jokes/random',
-            dataType: 'json',
-            success: function(quote){
-                console.log('original', quote.value);
-                var regEx = new RegExp('chuck norris', 'ig');
-                var chuckNorrisQuote = quote.value;
-                var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                $('.chuckNorrisQuote p').text(winnerQuote);
+        this.getQuote = function(winner, winnerImg){
+            $.ajax({
+                method: 'get',
+                url: 'https://api.chucknorris.io/jokes/random',
+                dataType: 'json',
+                success: function(quote){
+                    console.log('original', quote.value);
+                    var regEx = new RegExp('chuck norris', 'ig');
+                    var chuckNorrisQuote = quote.value;
+                    var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+                    $('.chuckNorrisQuote p').text(winnerQuote);
 
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-                console.log('winnerQuote',winnerQuote);
-                return winnerQuote;
-            },
-            error: function(){
-                console.log('something went wrong!')
-            }
-        });
-    }
-      this.selectAnswer = function (element, difficulty) {
+                    $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
+                    console.log('winnerQuote',winnerQuote);
+                    return winnerQuote;
+                },
+                error: function(){
+                    console.log('something went wrong!')
+                }
+            });
+        };
+
+      this.selectAnswer = function (element) {
+        console.log('hey select answer here', element.answer); //delete me after a while
           var specialty = false;
+
           if (element.answer === 'correct') {
-              if (element.category === model.player[mode.turn].character.category) {
+              if (element.category === model.player[model.turn].character.category) {
                   specialty = true;
                   this.dealDamage(this.dmgCalculator(difficulty, specialty))
               }
           }
-          this.checkWinState();
-      }
+          view.renderQuestion(model.questionBank);
+      };
       this.domParser = function (input) {
           var doc = new DOMParser().parseFromString(input, "text/html");
           return doc.documentElement.textContent;
