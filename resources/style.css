@@ -31,14 +31,29 @@ body {
     display: inline-block;
     vertical-align: top;
     position: relative;
+    background-image: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
 }
 
-.playerPhotoLarge {
-    height: 65vh;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scaleX(-1);
+/*.playerPhotoLarge {*/
+    /*height: 65vh;*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%) scaleX(-1);*/
+/*}*/
+
+/*.playerPhotoLeft, .playerPhotoRight {*/
+    /*background-image: none;*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: contain;*/
+    /*background-position: center;*/
+/*}*/
+
+.playerPhotoLeft {
+    transform: scaleX(-1);
 }
 
 .playerSelectionContainer {
@@ -47,6 +62,7 @@ body {
     width: 60vh;
     display: inline-block;
     vertical-align: top;
+    background-repeat: no-repeat;
 }
 
 .row {
@@ -59,7 +75,8 @@ body {
     margin: 0;
     font-family: ss4;
     padding: 3% 0;
-    font-size: 3em;
+    font-size: 2.5em;
+    color: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);
 }
 
 .playerAvatar {
@@ -71,11 +88,11 @@ body {
 }
 
 .playerAvatar:hover {
-    box-shadow: 0 0 20px red;
+    box-shadow: inset 0 0 20px red;
 }
 
 .playerAvatarClicked {
-    box-shadow: 0 0 20px red;
+    box-shadow: inset 0 0 20px red;
 }
 
 .playButton {
@@ -83,6 +100,10 @@ body {
     height: 100%;
     font-family: ss4;
     font-size: 3em;
+}
+
+.playButton:focus {
+    outline: 0;
 }
 
 #ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wolverine, #robin, #nightcrawler, #superman, #thething {
@@ -95,7 +116,7 @@ body {
     background-image: url('images/avatars/ironman.jpg');
 }
 
-#libertybell {
+#libertybelle {
     background-image: url('images/avatars/liberty-belle.jpg');
 }
 
@@ -181,8 +202,8 @@ body {
 }
 
 .timer {
-    height: 12vh;
-    width: 25vh;
+    height: 14vh;
+    width: 12vw;
     border: 8px solid black;
     position: absolute;
     top: 1.75%;
@@ -191,7 +212,7 @@ body {
     font-family: fighting;
     background-color: white;
     color: blue;
-    font-size: 4rem;
+    font-size: 4vh;
     text-align: center;
 }
 
@@ -237,8 +258,12 @@ body {
     height: 20%;
     border: 1px solid;
     display: inline-block;
+    box-sizing: border-box;
+    padding-top: 5%;
 }
-
+.answer:hover{
+    background-color: lightpink;
+}
 
 
 
@@ -303,9 +328,45 @@ body {
 
 .playAgain{
     width: 100%;
-
     height: 100%;
-
-
 }
 
+/*********************** Ready modal ************************/
+
+.readyBanner {
+  width: 100vw;
+  height: 25vh;
+  border-top: 7px solid darkred;
+  border-bottom: 7px solid darkred;
+  background-color: red;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  box-shadow: 0px 0px 120px black;
+}
+
+.readyButton {
+  width: 40vh;
+  height: 30vh;
+  border: 7px solid darkred;
+  background-color: red;
+  border-radius: 47%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  color: white;
+  font-family: fighting, ss4;
+  text-align: center;
+  padding-top: 0vh;
+  font-size: 11vh;
+  text-shadow: 3px 3px 13px black;
+  box-shadow: 0px 0px 60px black;
+  user-select: none;
+  cursor: pointer;
+}
+
+.readyButton:hover {
+  border: 7px solid yellow;
+}
