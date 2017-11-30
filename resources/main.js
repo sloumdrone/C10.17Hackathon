@@ -12,11 +12,13 @@ function initialize(){
   view.setController(controller);
   controller.setView(view);
   addClickHandlers(game, view);
+  view.handleAvatarHover();
 }
 
 function addClickHandlers(game, view, player){
     $('.playerAvatar').click(function(){
       if (game.avatarClickable){
+          console.log(game.turn);
         var characterSelection = $(event.target).attr('id');
         game.addPlayer(characterSelection);
         view.addOutlineToSelectedPlayer();
@@ -198,9 +200,25 @@ function View(model){
         })
     }
 
-    $("#ironman").hover(function() {
-        $('.playerPhotoLarge').
-    })
+    this.handleAvatarHover = function (){
+        $('.playerAvatar').hover(function() {
+            var characterImg = $(event.target).attr('id');
+            console.log(characterImg);
+            if(model.turn === 1) {
+                $('.playerContainerLeft').addClass('playerPhotoLeft');
+                $('.playerPhotoLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+            } else {
+                $('.playerContainerRight').addClass('playerPhotoRight');
+                $('.playerPhotoRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+            }
+        }, function () {
+            if (model.turn === 1) {
+                $('.playerContainerLeft').removeClass('playerPhotoLeft');
+            } else {
+                $('.playerContainerRight').removeClass('playerPhotoRight');
+            }
+        });
+    }
 
 }
 

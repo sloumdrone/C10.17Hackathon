@@ -33,12 +33,23 @@ body {
     position: relative;
 }
 
-.playerPhotoLarge {
-    height: 65vh;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scaleX(-1);
+/*.playerPhotoLarge {*/
+    /*height: 65vh;*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%) scaleX(-1);*/
+/*}*/
+
+.playerPhotoLeft, .playerPhotoRight {
+    background-image: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.playerPhotoLeft {
+    transform: scaleX(-1);
 }
 
 .playerSelectionContainer {
@@ -99,7 +110,7 @@ body {
     background-image: url('images/avatars/ironman.jpg');
 }
 
-#libertybell {
+#libertybelle {
     background-image: url('images/avatars/liberty-belle.jpg');
 }
 
