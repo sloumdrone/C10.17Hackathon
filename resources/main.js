@@ -22,7 +22,9 @@ function addClickHandlers(game, view, player){
         // view.addOutlineToSelectedPlayer();
       }
     });
-    $('.questionModal').on('click', '.answer', controller.selectAnswer)
+    $('.questionModal').on('click', '.answer', function(){
+        controller.selectAnswer(this)
+    })
 }
 
 
@@ -184,23 +186,29 @@ function View(model){
     this.renderQuestion = function(questions){ //renders Question and answers into Arena
         var qArray = questions;
         var entry = questions.shift(0);
+        var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
         game.questionsLeft--;
-        $('.questionContainer p').text(question);
+        var catSpan = $('<span>',{
+            text: category,
+            'class': 'category'
+        })
+        $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
-            createDiv(ans_i, correctAns, ansList[ans_i]);
+            this.createAnsDiv(ans_i, correctAns, ansList[ans_i], category);
         }
     }
     this.createAnsDiv=function(num, answer, text){
         var ansDiv= $('<div>',{
             id: 'q'+num,
             'class': 'answer',
-            text: text
+            text: controller.domParser(text)
         });
+        ansDiv[0].category = category;
         if(text!==answer){ //stores correct and incorrect properties inside the DOM element
             ansDiv[0].answer= 'incorrect';
         }else{
@@ -219,10 +227,30 @@ function View(model){
 
 
 function Controller(model,view){
+
+
   this.dealDamage = function(amount){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
+  }
+  this.dmgCalculator = function(difficulty, boolean){
+      var damagePercent = 0;
+      if(boolean){
+          damagePercent+=5;
+      }
+      switch (difficulty){
+          case 'easy':
+              damagePercent+=4;
+              break;
+          case 'medium':
+              damagePercent+=8;
+              break;
+          case 'hard':
+              damagePercent+=12;
+              break;
+      }
+      return damagePercent
   }
 
     var view = null;
@@ -257,6 +285,12 @@ function Controller(model,view){
       model.clickable = false;
       model.gameState = 'endgame';
       view.showEndgameWinner();
+    }else{
+        if(model.turn === 1){
+            model.turn +=1;
+        }else{
+            model.turn -=1;
+        }
     }
   }
 
@@ -296,24 +330,34 @@ function Controller(model,view){
   }
 
   this.getQuote = function(winner){
-    $.ajax({
-        method: 'get',
-        url: 'https://api.chucknorris.io/jokes/random',
-        dataType: 'json',
-        success: function(quote){
+        $.ajax({
+            method: 'get',
+            url: 'https://api.chucknorris.io/jokes/random',
+            dataType: 'json',
+            success: function(quote){
 
-          var regEx = new RegExp('chuck norris', 'ig');
-          var chuckNorrisQuote = quote.value;
+              var regEx = new RegExp('chuck norris', 'ig');
+              var chuckNorrisQuote = quote.value;
 
-          var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+              var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
 
-          console.log(winnerQuote);
-          return winnerQuote;
-        },
-        error: function(){
-          console.log('something went wrong!')
-        }
-    })
+              console.log(winnerQuote);
+              return winnerQuote;
+            },
+            error: function(){
+              console.log('something went wrong!')
+            }
+        })
+  }
+  this.selectAnswer = function(element,difficulty){
+      var specialty =false;
+      if(element.answer === 'correct'){
+            if(element.category === model.player[mode.turn].character.category){
+                specialty = true;
+                this.dealDamage(this.dmgCalculator(difficulty, specialty))
+            }
+      }
+      this.checkWinState();
   }
   this.domParser = function(input){
       var doc = new DOMParser().parseFromString(input, "text/html");
