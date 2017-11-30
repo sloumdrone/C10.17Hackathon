@@ -31,9 +31,11 @@ function addClickHandlers(game, view, controller){
     });
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        $('.readyBanner').fadeOut()
-        console.log(game.roundTime);
-        view.renderTimer(game.roundTime);
+        game.roundTime=21;
+        view.renderTimer();
+        $('.readyBanner').fadeOut();
+        // console.log(game.roundTime);
+
     });
 }
 
@@ -44,8 +46,9 @@ function GameModel(){
     this.playButtonClickable = false;
     this.bothPlayersSelected = false;
     this.turn = 1;
-    this.roundTime = 60; //just a starting number, tracks amount of time left in round;
+    this.roundTime = 21; //just a starting number, tracks amount of time left in round;
     // this.questionsLeft = 10; //tracks the number of questions asked
+    this.roundTimer = null;
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -248,7 +251,7 @@ function View(model){
         }
         // console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
-
+            clearInterval(model.roundTimer);
             //wincheckstate & player change
             if(model.turn===1){
                 $('.readyButton span').text('P2')
@@ -343,27 +346,22 @@ function View(model){
         }
 
     this.renderHeroInArena = function(players){   //renders each players img to main game board arena
-        console.log('it works')
+        console.log('it works');
         $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
-    }
+    };
 
-    this.renderTimer = function(startTime){   // renders the timer for each player
+    this.renderTimer = function(){   // renders the timer for each player
         console.log('render timer works');
         console.log('round time', model.roundTime);
-
-        var timer = setInterval(function(){
-
-            var timeLeft = startTime - 1;
-
-            $('.currentTime').text(timeLeft);
-
-            if(timeLeft === 0){
-                console.log('times up');
-                clearInterval(timer);
-
-            }
-        }, 1000)
+        model.roundTimer  = setInterval(function() {
+            model.roundTime--;
+            $('.currentTime').text(model.roundTime);
+            if(model.roundTime===0){
+                console.log('stop');
+                clearInterval(model.roundTimer)
+                }
+            }, 1000);
     }
 
 }
