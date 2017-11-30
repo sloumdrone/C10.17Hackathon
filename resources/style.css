@@ -212,58 +212,58 @@ h1 {
     outline: 0;
 }
 
-#ironman, #libertybelle, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wonderwoman, #robin, #nightcrawler, #superman, #thething {
+#ironman, #deadpool, #batman, #magneto, #captainamerica, #domino, #thor, #wonderwoman, #mystique, #scarletwitch, #superman, #thething {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
 }
 
 #ironman {
-    background-image: url('images/avatars/ironman.jpg');
+    background-image: url('images/avatars/ironman.png');
 }
 
-#libertybelle {
-    background-image: url('images/avatars/liberty-belle.jpg');
+#deadpool {
+    background-image: url('images/avatars/deadpool.png');
 }
 
 #batman {
-    background-image: url('images/avatars/batman.jpg');
+    background-image: url('images/avatars/batman.png');
 }
 
-#juggernaut {
-    background-image: url('images/avatars/juggernaut.jpg');
+#magneto {
+    background-image: url('images/avatars/magneto.png');
 }
 
-#mrfantastic {
-    background-image: url('images/avatars/mr-fantastic.jpg');
+#captainamerica {
+    background-image: url('images/avatars/captainamerica.png');
 }
 
-#mrsinister {
-    background-image: url('images/avatars/mr-sinister.jpg');
+#domino {
+    background-image: url('images/avatars/domino.png');
 }
 
 #thor {
-    background-image: url('images/avatars/thor.jpg');
+    background-image: url('images/avatars/thor.png');
 }
 
 #wonderwoman {
-    background-image: url('images/avatars/wonderwoman.jpg');
+    background-image: url('images/avatars/wonderwoman.png');
 }
 
-#robin {
-    background-image: url('images/avatars/robin.jpg');
+#mystique {
+    background-image: url('images/avatars/mystique.png');
 }
 
-#nightcrawler {
-    background-image: url('images/avatars/nightcrawler.jpg');
+#scarletwitch {
+    background-image: url('images/avatars/scarletwitch.png');
 }
 
 #superman {
-    background-image: url('images/avatars/superman.jpg');
+    background-image: url('images/avatars/superman.png');
 }
 
 #thething {
-    background-image: url('images/avatars/thing.jpg');
+    background-image: url('images/avatars/thething.png');
 }
 
 
