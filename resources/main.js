@@ -1,9 +1,8 @@
 
 
-$(document).ready(initialize)
+$(document).ready(initialize);
 
 function initialize(){
-
     var game = new GameModel();
     var view = new View(game);
     var controller = new Controller(game);
@@ -32,7 +31,8 @@ function addClickHandlers(game, view, controller){
     });
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        $('.readyBanner').fadeOut()
+        $('.readyBanner').fadeOut();
+        $('.questionModal').css('opacity', '1');
         console.log(game.roundTime);
         view.renderTimer(game.roundTime);
     });
@@ -45,8 +45,9 @@ function GameModel(){
     this.playButtonClickable = false;
     this.bothPlayersSelected = false;
     this.turn = 1;
-    this.roundTime = 60; //just a starting number, tracks amount of time left in round;
+    this.roundTime = 21; //just a starting number, tracks amount of time left in round;
     // this.questionsLeft = 10; //tracks the number of questions asked
+    this.roundTimer = null;
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -131,7 +132,7 @@ function GameModel(){
         },
         'wonderwoman' : {
             name: 'wonderwoman',
-            img: 'wonderwoman.png',
+            img: 'wonder-woman.png',
             category: "Art",
             categoryID: '27',
             heroID: '720'
@@ -193,6 +194,7 @@ function GameModel(){
 
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
+    this.domHitPoints = $('.hitPoints').css('width');
     this.character = game.availableCharacters[characterSelection];
     this.trivia = {}; //object of arrays of objects
 
@@ -240,10 +242,10 @@ function View(model){
 
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         // this'll take qbank question array as a parameter
-        console.log('****start of function + ',qArray);
+        // console.log('****start of function + ',qArray);
         $('.answer').remove();
         var entry = qArray.shift();
-        console.log('****after shift + ',qArray);
+        // console.log('****after shift + ',qArray);
         var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
@@ -255,15 +257,20 @@ function View(model){
             text: category,
             'class': 'category'
         });
-        console.log('****after after span creation ',qArray);
+        // console.log('****after after span creation ',qArray);
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        console.log('****after appending + ',qArray);
+        // console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
-
+            clearInterval(model.roundTimer);
             //wincheckstate & player change
+            if(model.turn===1){
+                $('.readyButton span').text('P2')
+            }else{
+                $('.readyButton span').text('P1')
+            }
             controller.checkWinState();
             console.log('****after checking winstate + ',qArray);
         }
@@ -283,30 +290,17 @@ function View(model){
         }else{
             ansDiv[0].answer = 'correct'
         }
-        $('.questionModal').append(ansDiv)
+        $('.answerContainer').append(ansDiv)
     };
 
     this.renderDmg = function(amount){
-        var percent = amount/100;//get percent equivalent of the dmg
-        var hpBar=null;
-        var hp=null;
-        var dmg=null;
-        var remainingHp=null;
         if(model.turn === 1){
-            hpBar = $('.right');
+            currentHpBar = $('.right');
 
         }else{
-            hpBar = $('.left')
+            currentHpBar = $('.left');
         }
-        var hpBar2 = hpBar.css('width');
-        hp = parseInt(hpBar2.substring(0,hpBar2.indexOf('p')));
-        dmg = Math.round(hp*percent);
-        if(hp-dmg<0){
-            remainingHp=0;
-        }else{
-            remainingHp=hp-dmg
-        }
-        hpBar.css('width', remainingHp+"px") //reduces the width by the percentage of the dmg.
+        currentHpBar.css('width', amount+"%") //reduces the width by the percentage of the dmg.
     };
 
   //
@@ -335,7 +329,7 @@ function View(model){
 
               // add function that triggers game start/load screen
             }
-        })
+        });
         this.renderHeroInArena(model.players);
     };
 
@@ -347,12 +341,12 @@ function View(model){
                         $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                         $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                         $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
+                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                     } else {
                         $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                         $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                         $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
+                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                     }
                 }
             }, function () {
@@ -362,30 +356,31 @@ function View(model){
                     $('.playerContainerRight').removeClass('playerPhotoRight');
                 }
             });
-        }
+        };
 
     this.renderHeroInArena = function(players){   //renders each players img to main game board arena
-        console.log('it works')
+        console.log('it works');
         $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
-    }
+    };
 
-    this.renderTimer = function(startTime){   // renders the timer for each player
+    this.renderTimer = function(){   // renders the timer for each player
         console.log('render timer works');
         console.log('round time', model.roundTime);
-
-        var timer = setInterval(function(){
-
-            var timeLeft = startTime - 1;
-
-            $('.currentTime').text(timeLeft);
-
-            if(timeLeft === 0){
-                console.log('times up');
-                clearInterval(timer);
-
-            }
-        }, 1000)
+        model.roundTimer  = setInterval(function() {
+            model.roundTime--;
+            $('.currentTime').text(model.roundTime);
+            if(model.roundTime===0){
+                console.log('stop');
+                clearInterval(model.roundTimer);
+                if(model.turn===1){
+                    $('.readyButton span').text('P2')
+                }else{
+                    $('.readyButton span').text('P1')
+                }
+                $('.readyBanner').show();
+                }
+            }, 1000);
     }
 
 }
@@ -422,7 +417,13 @@ function Controller(model,view){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
-    view.renderDmg(amount);
+    var hpTarget= null;
+    if(model.turn===1){
+        hpTarget = model.players[2]['hitPoints']
+    }else{
+        hpTarget = model.players[1]['hitPoints']
+    }
+    view.renderDmg(hpTarget);
     if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
         this.checkWinState();
     }
@@ -432,17 +433,17 @@ function Controller(model,view){
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
       if(boolean){
-          damagePercent+=5;
+          damagePercent+=7;
       }
       switch (difficulty){
           case 'easy':
-              damagePercent+=20;
+              damagePercent+=14;
               break;
           case 'medium':
-              damagePercent+=25;
+              damagePercent+=17;
               break;
           case 'hard':
-              damagePercent+=30;
+              damagePercent+=20;
               break;
       }
       return damagePercent
@@ -526,6 +527,7 @@ function Controller(model,view){
 
       };
 
+
     this.getCharacterInfo = function (character) {
         $.ajax({
             method: 'get',
@@ -535,11 +537,11 @@ function Controller(model,view){
                 model.availableCharacters[character].characterInfo = data;
             },
             error: function () {
-                console.log('something went wrong');
+                console.warn('something went wrong');
             }
         });
 
-    }
+    };
 
     this.buildCharacterInfo = function() {
         for (var character in model.availableCharacters) {
@@ -568,7 +570,7 @@ function Controller(model,view){
                 console.log('something went wrong!')
             }
         });
-    }
+    };
 
       this.selectAnswer = function (element) {
         console.log('hey select answer here', element.answer, model.turn); //delete me after a while
