@@ -28,9 +28,7 @@ body {
 .playerContainer {
     border: 1px solid black;
     height: 100vh;
-    width: 33vw;
-    display: inline-block;
-    vertical-align: top;
+    width: 30vw;
     position: absolute;
     background-image: none;
     background-repeat: no-repeat;
@@ -38,17 +36,27 @@ body {
     background-position: center;
 }
 
+.playerContainerRight {
+    position: absolute;
+    right: 0%;
+}
+
 .playerPhotoLeft {
     transform: scaleX(-1);
+    position: absolute;
 }
 
 .playerSelectionContainer {
     border: 1px solid;
     height: 100vh;
-    width: 60vh;
+    width: 40vw;
     display: inline-block;
     vertical-align: top;
     background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .row {
@@ -163,7 +171,6 @@ body {
   width: 100%;
   height: 100%;
   background-color: red;
-
 }
 
 .statsContainer {
@@ -181,8 +188,6 @@ body {
 
 .hitPointsContainerLeft {
     left: 0.5vw;
-
-
 }
 
 .hitPointsContainerRight {
