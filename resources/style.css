@@ -21,48 +21,42 @@ body {
 .modalContainer {
     height: 100vh;
     width: 100vw;
+    position: relative;
     /*display: none;*/
 }
 
 .playerContainer {
     border: 1px solid black;
     height: 100vh;
-    width: 33vw;
-    display: inline-block;
-    vertical-align: top;
-    position: relative;
+    width: 30vw;
+    position: absolute;
     background-image: none;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
 }
 
-/*.playerPhotoLarge {*/
-    /*height: 65vh;*/
-    /*position: absolute;*/
-    /*top: 50%;*/
-    /*left: 50%;*/
-    /*transform: translate(-50%, -50%) scaleX(-1);*/
-/*}*/
-
-/*.playerPhotoLeft, .playerPhotoRight {*/
-    /*background-image: none;*/
-    /*background-repeat: no-repeat;*/
-    /*background-size: contain;*/
-    /*background-position: center;*/
-/*}*/
+.playerContainerRight {
+    position: absolute;
+    right: 0%;
+}
 
 .playerPhotoLeft {
     transform: scaleX(-1);
+    position: absolute;
 }
 
 .playerSelectionContainer {
     border: 1px solid;
     height: 100vh;
-    width: 60vh;
+    width: 40vw;
     display: inline-block;
     vertical-align: top;
     background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .row {
@@ -196,8 +190,6 @@ body {
 
 .hitPointsContainerLeft {
     left: 0.5vw;
-
-
 }
 
 .hitPointsContainerRight {
