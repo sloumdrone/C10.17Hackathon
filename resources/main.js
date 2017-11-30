@@ -14,7 +14,7 @@ function initialize(){
     controller.buildQuestionShoe();
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
-    controller.buildCharacterInfo()
+    controller.buildCharacterInfo();
 }
 
 function addClickHandlers(game, view, controller){
@@ -32,6 +32,8 @@ function addClickHandlers(game, view, controller){
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
         $('.readyBanner').fadeOut()
+        console.log(game.roundTime);
+        view.renderTimer(game.roundTime);
     });
 }
 
@@ -245,6 +247,7 @@ function View(model){
         }
         console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
+
             //wincheckstate & player change
             controller.checkWinState();
             console.log('****after checking winstate + ',qArray);
@@ -346,10 +349,28 @@ function View(model){
             });
         }
 
-    this.renderHeroInArena = function(players){
+    this.renderHeroInArena = function(players){   //renders each players img to main game board arena
         console.log('it works')
-        $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")').addClass('playerContainerLeft');
+        $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
+    }
+
+    this.renderTimer = function(startTime){   // renders the timer for each player
+        console.log('render timer works');
+        console.log('round time', model.roundTime);
+
+        var timer = setInterval(function(){
+
+            var timeLeft = startTime - 1;
+
+            $('.currentTime').text(timeLeft);
+
+            if(timeLeft === 0){
+                console.log('times up');
+                clearInterval(timer);
+
+            }
+        }, 1000)
     }
 
 }
