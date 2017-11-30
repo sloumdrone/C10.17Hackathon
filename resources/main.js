@@ -14,7 +14,7 @@ function initialize(){
     controller.buildQuestionShoe();
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
-    controller.getCharacterInfo();
+    controller.buildCharacterInfo()
 }
 
 function addClickHandlers(game, view, controller){
@@ -75,13 +75,14 @@ function GameModel(){
             img: 'superman.png',
             category: 'General Knowledge',
             categoryID: '9',
-            heroheroID: '644'
+            heroID: '644'
         },
-        'libertybelle' : {
-            name: 'Liberty Belle',
+        'magneto' : {
+            name: 'Magneto',
             img: 'liberty-belle.png',
             category: "History",
-            categoryID: '19'
+            categoryID: '19',
+            heroID: '423'
         },
         'thething' : {
             name: 'The Thing',
@@ -155,7 +156,6 @@ function GameModel(){
         }
     };
 
-
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
         this.players[this.turn] = new Player(character, this);
@@ -214,11 +214,13 @@ function View(model){
         //add the win quote for the character to the win modal
         //show the win modal
     };
+
     var controller=null;
     this.setController = function(control){
         controller = control;
         delete this.setController;
     };
+
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         // this'll take qbank question array as a parameter
         $('.answer').remove();
@@ -243,6 +245,7 @@ function View(model){
             controller.checkWinState();
         }
     };
+
     this.createAnsDiv=function(num,text, entry){
         var ansDiv= $('<div>',{
             id: 'q'+num,
@@ -258,6 +261,7 @@ function View(model){
         }
         $('.questionModal').append(ansDiv)
     };
+
     this.renderDmg = function(amount){
         var percent = amount/100;//get percent equivalent of the dmg
         var hpBar=null;
@@ -316,8 +320,14 @@ function View(model){
                     var characterImg = $(event.target).attr('id');
                     if (model.turn === 1) {
                         $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                        $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
+                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
                     } else {
                         $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                        $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                        $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
+                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
                     }
                 }
             }, function () {
@@ -328,17 +338,6 @@ function View(model){
                 }
             });
         }
-
-    // this.handlePlayerInfoOnHover = function(){
-    //     $('.playerAvatar').hover(function () {
-    //         if (model.bothPlayersSelected === false) {
-    //             var characterInfo = $(event.target).attr('id');
-    //             if (model.turn === 1) {
-    //
-    //             }
-    //         }
-    //     })
-    // }
 
 }
 
@@ -480,21 +479,26 @@ function Controller(model,view){
 
       };
 
-    this.getCharacterInfo = function () {
-        for (var key in model.availableCharacters){
-            $.ajax({
-                method: 'get',
-                url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[key].heroID,
-                dataType: 'json',
-                success: function (data) {
-                    console.log(model.availableCharacters[key] = data);
-                },
-                error: function () {
-                    console.log('something went wrong');
-                }
-            });
-        }
+    this.getCharacterInfo = function (character) {
+        $.ajax({
+            method: 'get',
+            url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[character].heroID,
+            dataType: 'json',
+            success: function (data) {
+                model.availableCharacters[character].characterInfo = data;
+            },
+            error: function () {
+                console.log('something went wrong');
+            }
+        });
+
     }
+
+    this.buildCharacterInfo = function() {
+        for (var character in model.availableCharacters) {
+            this.getCharacterInfo(character);
+        }
+    };
 
     this.getQuote = function(winner, winnerImg) {
         $.ajax({
@@ -506,7 +510,7 @@ function Controller(model,view){
                 var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
                 var chuckNorrisQuote = quote.value;
                 var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
-                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen')) //makes font tag to change color of the name
+                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
                 $('.chuckNorrisQuote p').append(greenTxt);
 
                 $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')
