@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    user-select: none;
 }
 
 @font-face {
@@ -19,6 +20,11 @@ body {
 
 /*****************  player selection modal ******************/
 
+.playerOnHoverLeft, .playerOnHoverRight {
+  width: 30vw;
+  height: 100vh;
+}
+
 .modalContainer {
     height: 100vh;
     width: 100vw;
@@ -27,7 +33,7 @@ body {
     background-position: center;
     background-size: cover;
     /*display: none;*/
-    background-color: #7357ff;
+    background-color: #475eff;
 }
 
 .playerContainer {
@@ -41,12 +47,31 @@ body {
     background-position: center;
 }
 
+.infoTextContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 100%;
+}
+
+.infoHeader {
+  color: yellow;
+}
+
 .playerInfo {
     height: 20vh;
     width: 22vw;
-    border: 1px solid;
     position: absolute;
     top: 76vh;
+    padding: 5px;
+    /*border-radius: 5%;*/
+    /*border: 4px solid black;*/
+    /*background-color: rgba(245,245,220,0.6);*/
+
+    border: 1px solid;
+    border-radius: 20px;
+    background-color: rgba(0,0,0,0.6);
 }
 
 .playerInfoLeft {
@@ -58,7 +83,6 @@ body {
 }
 
 .playerContainerRight {
-    position: absolute;
     right: 0%;
 }
 
@@ -70,60 +94,126 @@ body {
 }
 
 .playerSelectionContainer {
-    border: 1px solid;
+    /*border-left: 5px solid black;
+    border-right: 5px solid black;*/
     height: 100vh;
     width: 40vw;
     display: inline-block;
     vertical-align: top;
-    background-repeat: no-repeat;
+    /*background-repeat: no-repeat;*/
+    /*background-color: rgba(145,145,120,0.6);*/
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
+    border: 1px solid;
+    /*border-radius: 20px;*/
+    background-color: rgba(0,0,0,0.6);
 }
 
 .row {
-    width: 100%;
-    height: 16.6%;
+    width: 46.5vmin;
+    height: 15vmin;
     text-align: center;
+    position: relative;
+    margin: 0.75vmin auto;
 }
 
-.title {
-    margin: 0;
-    font-family: ss4;
-    padding: 3% 0;
-    font-size: 2.5em;
-    color: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);
+.infoRow {
+  font-size: 2.5vmin;
+  color: white;
+  margin: 0.5vh auto;
+  text-align: center;
+}
+
+
+.gameTitle {
+  color: #ffdd00;
+  width: 100%;
+  text-shadow: 5px 5px 10px black;
+  font-size: 6vmin;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: ss4;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  padding: 0;
+}
+
+.row:last-child {
+  position: absolute;
+  bottom: 3vh;
+  margin: 0 auto;
+  border: 5px solid darkred;
+  color: white;
+  border-radius: 5%;
+  background-color: red;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 40px black;
+  cursor: pointer;
+}
+
+.row:last-child:hover {
+  border-color: yellow;
+  box-shadow: 0 0 80px black;
 }
 
 .playerAvatar {
-    border: 1px solid;
+    border: 3px solid black;
+    border-radius: 5%;
     display: inline-block;
-    width: 33.3%;
-    height: 100%;
-    float: left;
+    width: 15vmin;
+    height: 15vmin;
+    background-color: red;
+    cursor: pointer;
+}
+
+.playerAvatar:first-child {
+  margin-right: 0.75vmin;
+  left: 0;
+  position: absolute;
+}
+
+.playerAvatar:last-child {
+  margin-left: 0.75vmin;
+  position: absolute;
+  right: 0;
 }
 
 .playerAvatar:hover {
-    box-shadow: inset 0 0 20px red;
+    /*box-shadow: inset 0 0 20px red;*/
+    border-color: yellow;
 }
 
 .playerAvatarClicked {
-    box-shadow: inset 0 0 20px red;
+    /*box-shadow: inset 0 0 20px red;*/
+    filter: grayscale(1)
 }
 
 .playButton {
-    width: 100%;
-    height: 100%;
-    font-family: ss4;
-    font-size: 3em;
+    /*width: 100%;
+    height: 100%;*/
+    font-family: fighting;
+    font-size: 10vmin;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-shadow: 0 0 20px black;
 }
 
 .playButton:focus {
     outline: 0;
 }
 
-#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wonderwoman, #robin, #nightcrawler, #superman, #thething {
+#ironman, #libertybelle, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wonderwoman, #robin, #nightcrawler, #superman, #thething {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
