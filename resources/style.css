@@ -21,6 +21,7 @@ body {
 .modalContainer {
     height: 100vh;
     width: 100vw;
+    transition-duration:
     /*display: none;*/
 }
 
@@ -291,7 +292,7 @@ body {
     height: 70vh;
     border: 1px solid;
     position: absolute;
-    /*background-image: url("images/characters/batman.png");*/
+    background-image: url("images/characters/batman.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
