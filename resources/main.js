@@ -216,6 +216,25 @@ function View(model){
         }
         $('.questionModal').append(ansDiv)
     }
+    this.renderDmg = function(amount){
+        var percent = amount/100;//get percent equivalent of the dmg
+        var hpBar=null;
+        var remainingHp=null;
+        var dmg=null;
+        if(model.turn === 1){
+            hpBar = $('.right');
+
+        }else{
+            hpBar = $('.left')
+        }
+        remainingHp = hpBar.css('width')
+        if(remainingHp-amount<0){
+            dmg=0;
+        }else{
+            dmg=remainingHp-amount
+        }
+        hpBar.css('width', dmg+"%") //reduces the width by the percentage of the dmg.
+    }
 
   //
   // this.addOutlineToSelectedPlayer = function(){
@@ -233,6 +252,7 @@ function Controller(model,view){
     model.turn === 1
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
+    view.renderDmg(amount);
   }
   this.dmgCalculator = function(difficulty, boolean){
       var damagePercent = 0;
