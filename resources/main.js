@@ -15,6 +15,7 @@ function initialize(){
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
     controller.buildCharacterInfo();
+    $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
 }
 
 function addClickHandlers(game, view, controller){
@@ -157,6 +158,20 @@ function GameModel(){
             heroID: '644'
         }
     };
+
+    this.gameBoardBackgrounds = [
+      'airport.gif',
+      'backalley.gif',
+      'castle-ruins.gif',
+      'jungle-temple.gif',
+      'mansion.gif',
+      'over-pass.gif',
+      'ruins.gif',
+      'ship.gif',
+      'shipinterior.gif',
+      'water-fall.gif',
+      'wood-ruins.gif'
+    ]
 
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
@@ -314,9 +329,9 @@ function View(model){
               model.turn = 1;
 
 
-              $('.modalContainer').fadeOut(3000);
-              $('.gameBoard').fadeIn(1500);
-              $('.readyBanner').slideDown('slow');
+              $('.modalContainer').hide();
+              $('.gameBoard').show();
+              $('.readyBanner').show('slow');
 
               // add function that triggers game start/load screen
             }
