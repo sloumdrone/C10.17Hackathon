@@ -174,7 +174,7 @@ function GameModel(){
       'shipinterior.gif',
       'water-fall.gif',
       'wood-ruins.gif'
-    ]
+    ];
 
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
@@ -427,7 +427,7 @@ function Controller(model,view){
         hpTarget = model.players[1]['hitPoints']
     }
     view.renderDmg(hpTarget);
-    if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
+    if(model.questionBank===0 || model.players['1']['hitPoints']<=0 ||  model.players['2']['hitPoints']<=0){
         this.checkWinState();
     }
 
