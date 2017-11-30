@@ -72,33 +72,33 @@ function GameModel(){
     ];
 
     this.availableCharacters = {
-        'superman' : {
-            name: 'Superman',
-            img: 'superman.png',
+        'deadpool' : {
+            name: 'Deadpool',
+            img: 'deadpool.png',
             category: 'General Knowledge',
             categoryID: '9',
-            heroID: '644'
+            heroID: '213'
         },
         'magneto' : {
             name: 'Magneto',
-            img: 'liberty-belle.png',
-            category: "History",
+            img: 'magneto.png',
+            category: "Science: Computers",
             categoryID: '19',
             heroID: '423'
         },
         'thething' : {
             name: 'The Thing',
-            img: 'thing.png',
+            img: 'the-thing.png',
             category: "Science & Nature",
             categoryID: '18',
             heroID: '658'
         },
-        'mrfantastic' : {
-            name: 'Mr. Fantastic',
-            img: 'mr-fantastic.png',
-            category: "Science: Computers",
+        'captainamerica' : {
+            name: 'Captain America',
+            img: 'captain-america.png',
+            category: "History",
             categoryID: '18',
-            heroID: '456'
+            heroID: '149'
         },
         'batman' : {
             name: 'Batman',
@@ -121,12 +121,12 @@ function GameModel(){
             categoryID: '20',
             heroID: '659'
         },
-        'nightcrawler' : {
-            name: 'Nightcrawler',
-            img: 'nightcrawler.png',
+        'domino' : {
+            name: 'Domino',
+            img: 'domino.png',
             category: "Entertainment: Video Games",
             categoryID: '15',
-            heroID: '490'
+            heroID: '227'
         },
         'wonderwoman' : {
             name: 'wonderwoman',
@@ -135,26 +135,26 @@ function GameModel(){
             categoryID: '27',
             heroID: '720'
         },
-        'juggernaut' : {
-            name: 'Juggernaut',
-            img: 'juggernaut.png',
+        'mystique' : {
+            name: 'Mystique',
+            img: 'mystique.png',
             category: 'Sports',
             categoryID: '21',
-            heroID: '374'
+            heroID: '480'
         },
-        'mrsinister' : {
-            name: 'Mr. Sinister',
-            img: 'mr-sinister.png',
+        'scarletwitch' : {
+            name: 'Scarlet Witch',
+            img: 'scarlet-witch.png',
             category: "Science & Nature",
             categoryID: '23',
-            heroID: '460'
+            heroID: '579'
         },
-        'robin' : {
-            name: 'Robin',
-            img: 'robin.png',
+        'superman' : {
+            name: 'Superman',
+            img: 'superman.png',
             category: "Entertainment: Comics",
             categoryID: '29',
-            heroID: '561'
+            heroID: '644'
         }
     };
 
