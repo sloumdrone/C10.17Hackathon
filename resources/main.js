@@ -461,51 +461,31 @@ function Controller(model,view){
 
       };
 
-        this.getQuote = function(winner, winnerImg){
-            $.ajax({
-                method: 'get',
-                url: 'https://api.chucknorris.io/jokes/random',
-                dataType: 'json',
-                success: function(quote){
-                    console.log('original', quote.value);
-                    var regEx = new RegExp('chuck norris', 'ig');
-                    var chuckNorrisQuote = quote.value;
-                    var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                    $('.chuckNorrisQuote p').text(winnerQuote);
+    this.getQuote = function(winner, winnerImg) {
+        $.ajax({
+            method: 'get',
+            url: 'https://api.chucknorris.io/jokes/random',
+            dataType: 'json',
+            success: function (quote) {
+                console.log('original', quote.value);
+                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                var chuckNorrisQuote = quote.value;
+                var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
+                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen')) //makes font tag to change color of the name
+                $('.chuckNorrisQuote p').append(greenTxt);
 
-                    $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-                    console.log('winnerQuote',winnerQuote);
-                    return winnerQuote;
-                },
-                error: function(){
-                    console.log('something went wrong!')
-                }
-            });
-        };
-
-    // this.getQuote = function(winner, winnerImg){
-    //     $.ajax({
-    //         method: 'get',
-    //         url: 'https://api.chucknorris.io/jokes/random',
-    //         dataType: 'json',
-    //         success: function(quote){
-    //             console.log('original', quote.value);
-    //             var regEx = new RegExp('chuck norris', 'ig');
-    //             var chuckNorrisQuote = quote.value;
-    //             var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-    //             $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
-    //
-    //             $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
-    //             console.log('winnerQuote',winnerQuote);
-    //             return winnerQuote;
-    //         },
-    //         error: function(){
-    //             console.log('something went wrong!')
-    //         }
-    //     });
-
-
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')
+                console.log('winnerQuote', winnerQuote);
+                return winnerQuote;
+            },
+            error: function () {
+                console.log('something went wrong!')
+            }
+        });
     }
+
+
+
 
 
       this.selectAnswer = function (element) {
