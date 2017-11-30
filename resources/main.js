@@ -14,6 +14,7 @@ function initialize(){
     controller.buildQuestionShoe();
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
+    controller.getCharacterInfo();
 }
 
 function addClickHandlers(game, view, controller){
@@ -72,7 +73,8 @@ function GameModel(){
             name: 'Superman',
             img: 'superman.png',
             category: 'General Knowledge',
-            categoryID: '9'
+            categoryID: '9',
+            heroheroID: '644'
         },
         'libertybelle' : {
             name: 'Liberty Belle',
@@ -84,61 +86,71 @@ function GameModel(){
             name: 'The Thing',
             img: 'thing.png',
             category: "Science & Nature",
-            categoryID: '18'
+            categoryID: '18',
+            heroID: '658'
         },
         'mrfantastic' : {
             name: 'Mr. Fantastic',
             img: 'mr-fantastic.png',
             category: 'Computers',
-            categoryID: '18'
+            categoryID: '18',
+            heroID: '456'
         },
         'batman' : {
             name: 'Batman',
             img: 'batman.png',
             category: "Science: Gadgets",
-            categoryID: '9'
+            categoryID: '9',
+            heroID: '70'
         },
         'ironman' : {
             name: 'Iron Man',
             img: 'iron-man.png',
             category: 'Vehicles',
-            categoryID: '28'
+            categoryID: '28',
+            heroID: '346'
         },
         'thor' : {
             name: 'Thor',
             img: 'thor.png',
             category: 'Mythology',
-            categoryID: '20'
+            categoryID: '20',
+            heroID: '659'
         },
         'nightcrawler' : {
             name: 'Nightcrawler',
             img: 'nightcrawler.png',
             category: "Entertainment: Video Games",
-            categoryID: '15'
+            categoryID: '15',
+            heroID: '490'
         },
         'wonderwoman' : {
             name: 'wonderwoman',
             img: 'wonderwoman.png',
             category: "Art",
-            categoryID: '27'
+            categoryID: '27',
+            heroID: '720'
         },
         'juggernaut' : {
             name: 'Juggernaut',
             img: 'juggernaut.png',
             category: 'Sports',
-            categoryID: '21'
+            categoryID: '21',
+            heroID: '374'
         },
         'mrsinister' : {
             name: 'Mr. Sinister',
             img: 'mr-sinister.png',
             category: "Science & Nature",
-            categoryID: '23'
+            categoryID: '23',
+            heroID: '460'
         },
         'robin' : {
             name: 'Robin',
             img: 'robin.png',
             category: "Entertainment: Comics",
-            categoryID: '29'
+            categoryID: '29',
+            heroID: '561'
         }
     };
 
@@ -505,8 +517,23 @@ function Controller(model,view){
     //     });
 
 
-    }
+    // }
 
+    this.getCharacterInfo = function () {
+        for (var key in model.availableCharacters){
+            $.ajax({
+                method: 'get',
+                url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[key].heroID,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(model.availableCharacters[key] = data);
+                },
+                error: function () {
+                    console.log('something went wrong');
+                }
+            })
+        }
+    }
 
       this.selectAnswer = function (element) {
         console.log('hey select answer here', element.answer); //delete me after a while
