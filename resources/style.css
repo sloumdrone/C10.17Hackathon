@@ -23,13 +23,17 @@ body {
     height: 100vh;
     width: 100vw;
     position: relative;
+    background-image: url('images/particleBG.gif');
+    background-position: center;
+    background-size: cover;
     /*display: none;*/
+    background-color: #7357ff;
 }
 
 .playerContainer {
-    border: 1px solid black;
-    height: 100vh;
+    height: 75vh;
     width: 30vw;
+    top: 2.5vh;
     position: absolute;
     background-image: none;
     background-repeat: no-repeat;
@@ -37,13 +41,29 @@ body {
     background-position: center;
 }
 
+/*.playerInfo {*/
+    /*height: 20vh;*/
+    /*width: 22vw;*/
+    /*border: 1px solid;*/
+    /*position: absolute;*/
+    /*vertical-align: bottom;*/
+    /*top: 78vh;*/
+    /*left: 4vw;*/
+/*}*/
+
 .playerContainerRight {
     position: absolute;
     right: 0%;
 }
 
-.playerPhotoLeft {
+.playerContainerLeft {
     transform: scaleX(-1);
+    /*rotateY(135deg);*/
+    /*-webkit-transform: rotateY(135deg); !* Safari *!*/
+    /*transform: rotateY(180deg);*/
+}
+
+.playerPhotoLeft {
     position: absolute;
 }
 
@@ -101,7 +121,7 @@ body {
     outline: 0;
 }
 
-#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wolverine, #robin, #nightcrawler, #superman, #thething {
+#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wonderwoman, #robin, #nightcrawler, #superman, #thething {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -135,8 +155,8 @@ body {
     background-image: url('images/avatars/thor.jpg');
 }
 
-#wolverine {
-    background-image: url('images/avatars/wolverine.jpg');
+#wonderwoman {
+    background-image: url('images/avatars/wonderwoman.jpg');
 }
 
 #robin {
