@@ -343,7 +343,7 @@ function View(model){
                     $('.playerContainerRight').removeClass('playerPhotoRight');
                 }
             });
-        }
+        };
 
     this.renderHeroInArena = function(players){   //renders each players img to main game board arena
         console.log('it works');
@@ -359,7 +359,13 @@ function View(model){
             $('.currentTime').text(model.roundTime);
             if(model.roundTime===0){
                 console.log('stop');
-                clearInterval(model.roundTimer)
+                clearInterval(model.roundTimer);
+                if(model.turn===1){
+                    $('.readyButton span').text('P2')
+                }else{
+                    $('.readyButton span').text('P1')
+                }
+                $('.readyBanner').show();
                 }
             }, 1000);
     }
@@ -551,7 +557,7 @@ function Controller(model,view){
                 console.log('something went wrong!')
             }
         });
-    }
+    };
 
       this.selectAnswer = function (element) {
         console.log('hey select answer here', element.answer, model.turn); //delete me after a while
