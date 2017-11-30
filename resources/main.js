@@ -13,9 +13,10 @@ function initialize(){
     controller.setView(view);
     addClickHandlers(game, view);
     view.handleAvatarHover();
+    controller.buildQuestionShoe();
 }
 
-function addClickHandlers(game, view, player){
+function addClickHandlers(game, view, player, controller){
     $('.playerAvatar').click(function(){
         if (game.avatarClickable){
             console.log(game.turn);
@@ -129,6 +130,7 @@ function GameModel(){
         }
     }
 
+
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
         this.players[this.turn] = new Player(character, this);
@@ -163,19 +165,27 @@ function Player(characterSelection, game){
 
 
 function View(model){
-    //all of our functions for updating the view will go here
+  //all of our functions for updating the view will go here
 
-    this.showEndgameWinner = function(){
+    this.showEndgameWinner = function() {
         var winner;
-        if (model.players['1']['hitPoints'] > 0){
-            winner = model.players['1']['name'];
-        } else {
-            winner = model.players['2']['name'];
-        }
+        var winnerImg;
 
-        setTimeout(function(){
-            $('.chuckNorrisQuote p').text(controller.getQuote(winner));
+        if (model.players['1']['hitPoints'] > 0) {
+            // winner = model.players['1']['name'];
+            winner = model.players['1']['character']['name'];
+            winnerImg = model.players['1']['character']['img']
+        } else {
+            // winner = model.players['2']['name'];
+            winner = model.players['2']['character']['name'];
+            winnerImg = model.players['2']['character']['img']
+        }
+        controller.getQuote(winner, winnerImg);
+        setTimeout(function () {
+
+            $('.gameBoard').hide();
             $('.winnerModal').show();
+
         }, 3000)
         //wait a few seconds
         //add the win quote for the character to the win modal
@@ -240,6 +250,7 @@ function Controller(model,view) {
         delete this.setView;
     }
 
+
     this.getSessionToken = function () {
         $.ajax({
             method: 'GET',
@@ -259,11 +270,12 @@ function Controller(model,view) {
                 console.log('error input');
             }
         });
+
     }
 
-    this.checkWinState = function () {
+    this.checkWinState = function() {
         if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-            model.avatarClickable = false;
+            model.clickable = false;
             model.gameState = 'endgame';
             view.showEndgameWinner();
         }
@@ -303,25 +315,33 @@ function Controller(model,view) {
         });
     }
 
-    this.getQuote = function(winner){
-        $.ajax({
-            method: 'get',
-            url: 'https://api.chucknorris.io/jokes/random',
-            dataType: 'json',
-            success: function(quote){
 
-                var regEx = new RegExp('chuck norris', 'ig');
-                var chuckNorrisQuote = quote.value;
+  this.getQuote = function(winner, winnerImg){
+    $.ajax({
+        method: 'get',
+        url: 'https://api.chucknorris.io/jokes/random',
+        dataType: 'json',
+        success: function(quote){
+            console.log('original', quote.value);
+          var regEx = new RegExp('chuck norris', 'ig');
+          var chuckNorrisQuote = quote.value;
+          var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+          $('.chuckNorrisQuote p').text(winnerQuote);
 
-                var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
+          $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
+          console.log('winnerQuote',winnerQuote);
+          return winnerQuote;
+        },
+        error: function(){
+          console.log('something went wrong!')
+        }
+    });
+  }
 
-                console.log(winnerQuote);
-                return winnerQuote;
-            },
-            error: function(){
-                console.log('something went wrong!')
-            }
-        })
-    }
+
+
+
+
+
 
 }
