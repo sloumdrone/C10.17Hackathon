@@ -16,53 +16,68 @@ body {
     overflow: hidden;
 }
 
+
 /*****************  player selection modal ******************/
 
 .modalContainer {
     height: 100vh;
     width: 100vw;
+    position: relative;
+    background-image: url('images/particleBG.gif');
+    background-position: center;
+    background-size: cover;
     /*display: none;*/
+    background-color: #7357ff;
 }
 
 .playerContainer {
-    border: 1px solid black;
-    height: 100vh;
-    width: 33vw;
-    display: inline-block;
-    vertical-align: top;
-    position: relative;
+    height: 75vh;
+    width: 30vw;
+    top: 2.5vh;
+    position: absolute;
     background-image: none;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
 }
 
-/*.playerPhotoLarge {*/
-    /*height: 65vh;*/
+/*.playerInfo {*/
+    /*height: 20vh;*/
+    /*width: 22vw;*/
+    /*border: 1px solid;*/
     /*position: absolute;*/
-    /*top: 50%;*/
-    /*left: 50%;*/
-    /*transform: translate(-50%, -50%) scaleX(-1);*/
+    /*vertical-align: bottom;*/
+    /*top: 78vh;*/
+    /*left: 4vw;*/
 /*}*/
 
-/*.playerPhotoLeft, .playerPhotoRight {*/
-    /*background-image: none;*/
-    /*background-repeat: no-repeat;*/
-    /*background-size: contain;*/
-    /*background-position: center;*/
-/*}*/
+.playerContainerRight {
+    position: absolute;
+    right: 0%;
+}
+
+.playerContainerLeft {
+    transform: scaleX(-1);
+    /*rotateY(135deg);*/
+    /*-webkit-transform: rotateY(135deg); !* Safari *!*/
+    /*transform: rotateY(180deg);*/
+}
 
 .playerPhotoLeft {
-    transform: scaleX(-1);
+    position: absolute;
 }
 
 .playerSelectionContainer {
     border: 1px solid;
     height: 100vh;
-    width: 60vh;
+    width: 40vw;
     display: inline-block;
     vertical-align: top;
     background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .row {
@@ -106,7 +121,7 @@ body {
     outline: 0;
 }
 
-#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wolverine, #robin, #nightcrawler, #superman, #thething {
+#ironman, #libertybell, #batman, #juggernaut, #mrfantastic, #mrsinister, #thor, #wonderwoman, #robin, #nightcrawler, #superman, #thething {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -140,8 +155,8 @@ body {
     background-image: url('images/avatars/thor.jpg');
 }
 
-#wolverine {
-    background-image: url('images/avatars/wolverine.jpg');
+#wonderwoman {
+    background-image: url('images/avatars/wonderwoman.jpg');
 }
 
 #robin {
@@ -171,13 +186,17 @@ body {
     height: 100vh;
     width: 100vw;
     display: none;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .hitPoints {
   width: 100%;
   height: 100%;
   background-color: red;
-
+  background-image: url('https://media.giphy.com/media/lDKVeTHWDPSuc/giphy.gif');
+  background-repeat: repeat;
+  background-position: center;
 }
 
 .statsContainer {
@@ -195,13 +214,10 @@ body {
 
 .hitPointsContainerLeft {
     left: 0.5vw;
-
-
 }
 
 .hitPointsContainerRight {
     right: 0.5vw;
-    transition: 2s;
 }
 
 .timer {
@@ -215,8 +231,16 @@ body {
     font-family: fighting;
     background-color: white;
     color: blue;
-    font-size: 4vh;
+    font-size: 8vh;
     text-align: center;
+}
+
+.currentTime {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: inline-block;
 }
 
 .player1, .player2 {
@@ -305,12 +329,10 @@ body {
     border: 1px solid;
     border-radius: 6%;
     position: absolute;
-
     animation: spin 4s infinite;
     animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1.2);
     animation-iteration-count: 1;
     transform-style: preserve-3d;
-
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
