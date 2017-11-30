@@ -412,7 +412,7 @@ function Controller(model,view){
                 var regEx = new RegExp('chuck norris', 'ig');
                 var chuckNorrisQuote = quote.value;
                 var winnerQuote = chuckNorrisQuote.replace(regEx, winner);
-                $('.chuckNorrisQuote p').text(winnerQuote);
+                $('.chuckNorrisQuote p').html(winnerQuote.replace(winner, winner.fontcolor('limegreen')));
 
                 $('.winningCharacter').css('background-image', 'url("resources/images/characters/'+winnerImg+'")')
                 console.log('winnerQuote',winnerQuote);
