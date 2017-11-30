@@ -221,8 +221,10 @@ function View(model){
     };
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         // this'll take qbank question array as a parameter
+        console.log('****start of function + ',qArray);
         $('.answer').remove();
         var entry = qArray.shift();
+        console.log('****after shift + ',qArray);
         var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
@@ -234,14 +236,18 @@ function View(model){
             text: category,
             'class': 'category'
         });
+        console.log('****after after span creation ',qArray);
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
+        console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
             //wincheckstate & player change
             controller.checkWinState();
+            console.log('****after checking winstate + ',qArray);
         }
+
     };
     this.createAnsDiv=function(num,text, entry){
         var ansDiv= $('<div>',{
@@ -263,7 +269,7 @@ function View(model){
         var hpBar=null;
         var hp=null;
         var dmg=null;
-        var remainingHp=null
+        var remainingHp=null;
         if(model.turn === 1){
             hpBar = $('.right');
 
@@ -383,8 +389,6 @@ function Controller(model,view){
     view.renderDmg(amount);
     if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
         this.checkWinState();
-    }else{
-        view.renderQuestion(model.questionBank)
     }
 
   };
