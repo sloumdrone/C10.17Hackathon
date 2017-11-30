@@ -77,7 +77,7 @@ function GameModel(){
             img: 'superman.png',
             category: 'General Knowledge',
             categoryID: '9',
-            heroheroID: '644'
+            heroID: '644'
         },
         'libertybelle' : {
             name: 'Liberty Belle',
@@ -95,7 +95,7 @@ function GameModel(){
         'mrfantastic' : {
             name: 'Mr. Fantastic',
             img: 'mr-fantastic.png',
-            category: 'Computers',
+            category: "Science: Computers",
             categoryID: '18',
             heroID: '456'
         },
@@ -409,7 +409,7 @@ function Controller(model,view){
     ? model.players[model.turn + 1]['hitPoints'] -= amount
     : model.players[model.turn - 1]['hitPoints'] -= amount;
     view.renderDmg(amount);
-    if(model.questionBank===0 || model.players[2]['hitPoints']===0 ||  model.players[1]['hitPoints']===0){
+    if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
         this.checkWinState();
     }
 
