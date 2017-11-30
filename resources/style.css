@@ -29,7 +29,7 @@ body {
     height: 100vh;
     width: 100vw;
     position: relative;
-    background-image: url('images/particleBG.gif');
+    background-image: url('images/backgrounds/particleBG.gif');
     background-position: center;
     background-size: cover;
     /*display: none;*/
@@ -60,6 +60,7 @@ body {
 }
 
 .playerInfo {
+    font-family: 'Ubuntu', sans-serif;
     height: 20vh;
     width: 22vw;
     position: absolute;
@@ -84,10 +85,10 @@ body {
 
 .playerContainerRight {
     right: 0%;
+    transform: scaleX(-1);
 }
 
 .playerContainerLeft {
-    transform: scaleX(-1);
     /*rotateY(135deg);*/
     /*-webkit-transform: rotateY(135deg); !* Safari *!*/
     /*transform: rotateY(180deg);*/
@@ -293,8 +294,8 @@ h1 {
 
 .statsContainer {
     height: 15vh;
-    width: 101vw;
-
+    width: 100vw;
+    position: relative;
 }
 
 .hitPointsContainerLeft, .hitPointsContainerRight {
@@ -314,19 +315,44 @@ h1 {
 }
 
 .timer {
-    height: 14vh;
+    height: 12vh;
     width: 12vw;
-    border: 8px solid black;
     position: absolute;
     top: 1.75%;
     left: 50%;
     transform: translateX(-50%);
     font-family: fighting;
-    background-color: white;
+    background-color: rgba(240,240,240,0.3);
     color: blue;
-    font-size: 8vh;
+    font-size: 12vmin;
+    text-shadow: 0 0 30px white;
     text-align: center;
 }
+
+#p1name {
+  display: inline-block;
+    color: whitesmoke;
+    position: absolute;
+    font-family: fighting;
+    font-size: 3vmin;
+    bottom: 2vh;
+    left: 1vw;
+    text-shadow: 0 0 10px black;
+    letter-spacing: 3px;
+}
+
+#p2name {
+  display: inline-block;
+    color: whitesmoke;
+    position: absolute;
+    font-family: fighting;
+    font-size: 3vmin;
+    bottom: 2vh;
+    right: 1vw;
+    text-shadow: 0 0 10px black;
+    letter-spacing: 3px;
+}
+
 
 .currentTime {
   position: absolute;
@@ -339,7 +365,7 @@ h1 {
 .player1, .player2 {
     height: 85vh;
     width: 25vw;
-    border: 1px solid;
+    /*border: 1px solid;*/
     position: absolute;
     top: 58%;
     background-image: none;
@@ -350,42 +376,56 @@ h1 {
 
 .player1 {
     left: 13vw;
-    transform: translate(-50%, -50%) scaleX(-1);
+    transform: translate(-50%, -50%);
 }
 
 .player2 {
     left: 87vw;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scaleX(-1);
 }
 
 .questionModal {
     width: 45vw;
     height: 35vw;
-    border: 1px solid;
+    border: 4px solid silver;
     position: absolute;
     top: 57%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     font-family: sans-serif;
+    background-color: rgba(140,140,140,0.75);
+    border-radius: 5vmin;
+
+    /* Lori added opacity, Brian added opacity on the bgcolor...see if they play nicely together then remove comment */
+    opacity: 0;
+    transition: 0.75s;
 }
 
+
 .questionContainer, .answerContainer {
+    font-family: 'Ubuntu', sans-serif;
     width: 90%;
     height: 40%;
-    border: 1px solid;
+    border: 1px solid whitesmoke;
     margin: 5% auto;
     font-size: 1.5vw;
+    background-color: #d3d2d2;
+    border-radius: 3vmin;
 }
 
 
 .answer {
-    width: 50%;
-    height: 50%;
-    border: 1px solid;
+    font-family: 'Ubuntu', sans-serif;
+    width: 45%;
+    height: 20%;
+    border: 1px solid whitesmoke;
     display: inline-block;
     box-sizing: border-box;
     padding-top: 5%;
+    background-color: rgb(65,61,61);
+    color: whitesmoke;
+    border-radius: 1vmin;
 }
 .answer:hover{
     background-color: lightpink;
@@ -408,7 +448,7 @@ h1 {
     width: 100vw;
     border: 1px solid black;
     display: none;
-    background-image: url('images/background6.gif');
+    background-image: url('images/backgrounds/background6.gif');
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;

@@ -3,7 +3,6 @@
 $(document).ready(initialize);
 
 function initialize(){
-
     var game = new GameModel();
     var view = new View(game);
     var controller = new Controller(game);
@@ -15,6 +14,7 @@ function initialize(){
     addClickHandlers(game, view,controller);
     view.handleAvatarHover();
     controller.buildCharacterInfo();
+    $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
 }
 
 function addClickHandlers(game, view, controller){
@@ -30,12 +30,13 @@ function addClickHandlers(game, view, controller){
         controller.selectAnswer(this, view)
     });
     $('.readyButton').on('click',function(){
+        clearInterval(game.roundTimer);
         controller.questionBank(game.questions);
         game.roundTime=60;
         view.renderTimer();
         $('.readyBanner').fadeOut();
-        // console.log(game.roundTime);
-
+        $('.questionModal').css('opacity', '1');
+        console.log(game.roundTime);
     });
 }
 
@@ -133,7 +134,7 @@ function GameModel(){
         },
         'wonderwoman' : {
             name: 'wonderwoman',
-            img: 'wonderwoman.png',
+            img: 'wonder-woman.png',
             category: "Art",
             categoryID: '27',
             heroID: '720'
@@ -160,6 +161,20 @@ function GameModel(){
             heroID: '644'
         }
     };
+
+    this.gameBoardBackgrounds = [
+      'airport.gif',
+      'backalley.gif',
+      'castle-ruins.gif',
+      'jungle-temple.gif',
+      'mansion.gif',
+      'over-pass.gif',
+      'ruins.gif',
+      'ship.gif',
+      'shipinterior.gif',
+      'water-fall.gif',
+      'wood-ruins.gif'
+    ]
 
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
@@ -274,7 +289,7 @@ function View(model){
         }else{
             ansDiv[0].answer = 'correct'
         }
-        $('.answerContainer').append(ansDiv)
+        $('.questionModal').append(ansDiv)
     };
 
     this.renderDmg = function(amount){
@@ -307,9 +322,9 @@ function View(model){
               model.turn = 1;
 
 
-              $('.modalContainer').fadeOut(3000);
-              $('.gameBoard').fadeIn(1500);
-              $('.readyBanner').slideDown('slow');
+              $('.modalContainer').hide();
+              $('.gameBoard').show();
+              $('.readyBanner').show('slow');
 
               // add function that triggers game start/load screen
             }
@@ -325,12 +340,12 @@ function View(model){
                         $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                         $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                         $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
+                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                     } else {
                         $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                         $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                         $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation);
+                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                     }
                 }
             }, function () {
@@ -534,7 +549,7 @@ function Controller(model,view){
                 model.availableCharacters[character].characterInfo = data;
             },
             error: function () {
-                console.log('something went wrong');
+                console.warn('something went wrong');
             }
         });
 
