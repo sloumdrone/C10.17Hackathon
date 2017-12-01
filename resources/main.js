@@ -2,8 +2,10 @@ $(document).ready(initialize);
 
 
 function initialize(){
-    $('*').attr('style','').removeClass('playerAvatarClicked');
-    $('.emptyMe').empty();
+    //commented for after hackathon use
+    // $('*').attr('style','').removeClass('playerAvatarClicked');
+    // $('.emptyMe').empty();
+    // $('.currentTime').text('60');
 
     var game = new GameModel();
     var view = new View(game);
@@ -17,6 +19,7 @@ function initialize(){
     view.handleAvatarHover();
     controller.buildCharacterInfo();
     $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
+    console.log('Round timer: ' + game.roundTimer,'round time: ' + game.roundTime, 'HTML timer text:' + $('.timer').text());
 }
 
 
@@ -42,7 +45,7 @@ function addClickHandlers(game, view, controller){
     });
 
     $('.playAgain').click(function(){
-      initialize();
+      location.reload();
     })
 
 
@@ -241,12 +244,12 @@ function View(model){
             winnerImg = model.players['2']['character']['img']
             winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
-        controller.getQuote(winner, winnerImg, winnerSex);
-        setTimeout(function () {
 
+        controller.getQuote(winner, winnerImg, winnerSex);
+
+        setTimeout(function () {
             $('.gameBoard').hide();
             $('.winnerModal').show();
-
         }, 500)
         //wait a few seconds
         //add the win quote for the character to the win modal
@@ -673,5 +676,3 @@ function Controller(model,view){
       }
 
 }
-
-
