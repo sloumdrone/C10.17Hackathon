@@ -34,6 +34,7 @@ body {
     background-position: center;
     background-size: cover;
     background-color: #475eff;
+    display: none;
 }
 
 .playerContainer {
@@ -610,4 +611,45 @@ h1 {
 
 .readyButton:hover {
   border: 7px solid yellow;
+}
+
+
+/*=============== Load Screen ==================*/
+
+.loadScreen {
+  background-image: url('images/backgrounds/particleBG.gif');
+  width: 100vw;
+  height: 100vh;
+  background-color: #475eff;
+}
+
+.loadingTitle {
+  color: yellow;
+  text-shadow: 0 0 20px black;
+  font-family: ss4;
+  font-size: 10vmin;
+  position: absolute;
+  top: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.loadingBarContainer {
+  border: 4px solid black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50vw;
+  border-radius: 5px;
+  height: 10vh;
+  transform: translate(-50%,-50%);
+}
+
+.loadingBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 10%;
+  background-color: red;
 }

@@ -64,6 +64,7 @@ function GameModel(){
     this.roundTime = 60; //just a starting number, tracks amount of time left in round;
     // this.questionsLeft = 10; //tracks the number of questions asked
     this.roundTimer = null;
+    this.apiResponse = 0;
     this.questions = {};
     this.players = {
         //1 : Player {}
@@ -557,7 +558,15 @@ function Controller(model,view){
               color: 'lavender'
             },
             success: function (data) {
+                model.apiResponse++
+                console.log(model.apiResponse);
+                $('.loadingBar').css('width', model.apiResponse * 7.5 + 17.5 + '%');
                 model.availableCharacters[character].characterInfo = data;
+
+                if (model.apiResponse >= 12){
+                  $('.modalContainer').show( 1 );
+                  $('.loadScreen').hide( 1 );
+                }
             },
             error: function () {
                 console.warn('something went wrong');
