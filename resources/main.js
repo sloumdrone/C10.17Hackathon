@@ -33,7 +33,7 @@ function addClickHandlers(game, view, controller){
 
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
-        game.roundTime=60;
+        game.roundTime = 60;
         view.renderTimer();
         $('.readyBanner').fadeOut();
 
@@ -264,7 +264,7 @@ function View(model, controller){
             }else{
                 $('.readyButton span').text('P1')
             }
-            this.controller.checkWinState();
+            that.controller.checkWinState();
         }
     };
 
@@ -701,9 +701,9 @@ function Controller(){
           $('.playerAvatar').unbind('hover');
           $('.playerAvatar').unbind('click');
           $('.questionModal').unbind('click');
-          $('.readyButton').unbind('click');
+          // $('.readyButton').unbind('click');
 
-          // clearInterval(this.model.roundTimer)
+          clearInterval(this.model.roundTimer)
 
 
           initialize();
