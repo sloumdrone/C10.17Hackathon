@@ -47,11 +47,11 @@ function addClickHandlers(game, view, controller){
 
 
     $('.readyButton').on('click',function(){
-        clearInterval(game.roundTimer);
         controller.questionBank(game.questions);
         game.roundTime=60;
         view.renderTimer();
         $('.readyBanner').fadeOut();
+
         $('.questionModal').addClass('questionModalShow');
         console.log(game.roundTime);
     });
@@ -191,7 +191,7 @@ function GameModel(){
       'shipinterior.gif',
       'water-fall.gif',
       'wood-ruins.gif'
-    ]
+    ];
 
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
@@ -226,6 +226,7 @@ function View(model){
   //all of our functions for updating the view will go here
 
     this.showEndgameWinner = function() {
+        clearInterval(model.roundTimer);
         var winner;
         var winnerImg;
 
@@ -233,18 +234,20 @@ function View(model){
             // winner = model.players['1']['name'];
             winner = model.players['1']['character']['name'];
             winnerImg = model.players['1']['character']['img']
+            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         } else {
             // winner = model.players['2']['name'];
             winner = model.players['2']['character']['name'];
             winnerImg = model.players['2']['character']['img']
+            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
-        controller.getQuote(winner, winnerImg);
+        controller.getQuote(winner, winnerImg, winnerSex);
         setTimeout(function () {
 
             $('.gameBoard').hide();
             $('.winnerModal').show();
 
-        }, 3000)
+        }, 500)
         //wait a few seconds
         //add the win quote for the character to the win modal
         //show the win modal
@@ -456,7 +459,7 @@ function Controller(model,view){
         hpTarget = model.players[1]['hitPoints']
     }
     view.renderDmg(hpTarget);
-    if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
+    if(model.questionBank===0 || model.players['1']['hitPoints']<=0 ||  model.players['2']['hitPoints']<=0){
         this.checkWinState();
     }
 
@@ -594,22 +597,56 @@ function Controller(model,view){
         }
     };
 
-    this.getQuote = function(winner, winnerImg) {
+    this.getQuote = function(winner, winnerImg, winnerSex) {
+        var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"]
+        var randomNum = Math.floor(Math.random() * categories.length);
+        var randomCategory = categories[randomNum];
+
+
+
         $.ajax({
             method: 'get',
             url: 'https://api.chucknorris.io/jokes/random',
             dataType: 'json',
+            data: {'category': randomCategory},
             success: function (quote) {
                 console.log('original', quote.value);
-                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
                 var chuckNorrisQuote = quote.value;
-                var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
-                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
-                $('.chuckNorrisQuote p').append(greenTxt);
 
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
+
+
+                var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
+
+                var regEx2 = new RegExp('chuck', 'ig');
+                winnerQuote = winnerQuote.replace(regEx2, winner);  //change the word 'chuck' with winner's name
+
+                var regEx3 = new RegExp('norris', 'ig');
+                winnerQuote = winnerQuote.replace(regEx3, winner);  //change the word 'norris' with winner's name
+
+                if(winnerSex === 'Female'){  //if the sex of the winner is female, change the words 'his' and 'he' to 'her' and 'she'
+                    var regEx4 = new RegExp('he', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx4, 'she');
+
+                    var regEx5 = new RegExp('his', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx5, 'hers');
+
+                    var regEx6 = new RegExp('him', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx6, 'her');
+
+                }
+
+                // find all winner's name and color it to lime green;
+                var findTheName = winner;
+                var replaceAllName = new RegExp(findTheName, 'g');
+                var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
+                console.log(winner)
                 console.log('winnerQuote', winnerQuote);
-                return winnerQuote;
+                // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
+
+
+                $('.chuckNorrisQuote p').append(greenTxt);
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
             },
             error: function () {
                 console.log('something went wrong!')
@@ -636,3 +673,5 @@ function Controller(model,view){
       }
 
 }
+
+
