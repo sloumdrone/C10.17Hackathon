@@ -46,7 +46,6 @@ function addClickHandlers(game, view, controller){
         $('.readyBanner').fadeOut();
 
         $('.questionModal').addClass('questionModalShow');
-        console.log(game.roundTime);
     });
 }
 
@@ -143,7 +142,7 @@ function GameModel(){
             heroID: '227'
         },
         'wonderwoman' : {
-            name: 'wonderwoman',
+            name: 'Wonder Woman',
             img: 'wonder-woman.png',
             category: "Art",
             categoryID: '27',
@@ -220,6 +219,7 @@ function View(model){
 
     this.showEndgameWinner = function() {
         clearInterval(model.roundTimer);
+        $('.readyButton span').text('P1');
         var winner;
         var winnerImg;
 
@@ -253,11 +253,8 @@ function View(model){
     };
 
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
-        // this'll take qbank question array as a parameter
-        // console.log('****start of function + ',qArray);
         $('.answer').remove();
         var entry = qArray.shift();
-        // console.log('****after shift + ',qArray);
         var category = entry.category;
         var question = controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
@@ -269,12 +266,10 @@ function View(model){
             text: category,
             'class': 'category'
         });
-        // console.log('****after after span creation ',qArray);
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        // console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
             $('.questionModal').removeClass('questionModalShow');
             clearInterval(model.roundTimer);
@@ -285,9 +280,7 @@ function View(model){
                 $('.readyButton span').text('P1')
             }
             controller.checkWinState();
-            console.log('****after checking winstate + ',qArray);
         }
-
     };
 
     this.createAnsDiv=function(num,text, entry){
@@ -315,12 +308,6 @@ function View(model){
         }
         currentHpBar.css('width', amount+"%") //reduces the width by the percentage of the dmg.
     };
-
-  //
-  // this.addOutlineToSelectedPlayer = function(){
-  //     $(this).addClass('playerAvatarClicked');
-  //     console.log(this);
-  // }
 
     this.addOutlineToSelectedPlayer = function(){
         $(event.target).addClass('playerAvatarClicked');
@@ -364,11 +351,11 @@ function View(model){
                 } else {
                     $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     $('.characterNameRight').text(model.availableCharacters[characterImg].name);
-                    $('.infoHeaderName').text('Real Name: ');
+                    $('.infoHeaderNameRight').text('Real Name: ');
                     $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
-                    $('.infoHeaderPower').text('Power: ');
+                    $('.infoHeaderPowerRight').text('Power: ');
                     $('#categoryIDRight').text(model.availableCharacters[characterImg].category);
-                    $('.infoHeaderOccupation').text('Occupation: ');
+                    $('.infoHeaderOccupationRight').text('Occupation: ');
                     $('#occupationRight').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 }
             }
@@ -382,19 +369,15 @@ function View(model){
     };
 
     this.renderHeroInArena = function(players){   //renders each players img to main game board arena
-        // console.log('it works');
         $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
     };
 
     this.renderTimer = function(){   // renders the timer for each player
-        console.log('render timer works');
-        console.log('round time', model.roundTime);
         model.roundTimer  = setInterval(function() {
             model.roundTime--;
             $('.currentTime').text(model.roundTime);
             if(model.roundTime===0){
-                // console.log('stop');
                 $('.questionModal').removeClass('questionModalShow');
                 clearInterval(model.roundTimer);
                 if(model.turn===1){
@@ -500,7 +483,7 @@ function Controller(model,view){
              }
           },
           error: function(){
-              console.log('error input');
+              console.warn('error input');
           }
       });
   };
@@ -544,18 +527,16 @@ function Controller(model,view){
               success: function (data) {
                   if (data.response_code === 0) {
                       model.questions[diff] = data.results;
-                      console.log('finished ' + diff );
                   } else {
                       alert('Issue with question retrieval. Response code: ' + data.response_code);
                   }
               },
               error: function () {
-                  console.log('error input')
+                  console.warn('error input');
               }
           });
       };
       this.buildQuestionShoe = function () {
-          console.log('build shoe');
           var difficulty = ['easy', 'medium', 'hard'];
 
           difficulty.forEach((element) => {
@@ -603,10 +584,8 @@ function Controller(model,view){
             dataType: 'json',
             data: {'category': randomCategory},
             success: function (quote) {
-                console.log('original', quote.value);
+                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
                 var chuckNorrisQuote = quote.value;
-
-
 
                 var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
                 var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
@@ -642,14 +621,12 @@ function Controller(model,view){
                 $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
             },
             error: function () {
-                console.log('something went wrong!')
+                console.warn('something went wrong!');
             }
         });
     };
 
       this.selectAnswer = function (element) {
-        console.log('hey select answer here', element.answer, model.turn); //delete me after a while
-
           var specialty = false;
 
           if (element.answer === 'correct') {
