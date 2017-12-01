@@ -214,7 +214,7 @@ function View(model, controller){
         $('.readyButton span').text('P1');
         var winner;
         var winnerImg;
-
+        var winnerSex;
         if (model.players['1']['hitPoints'] > 0) {
             // winner = model.players['1']['name'];
             winner = model.players['1']['character']['name'];
@@ -703,7 +703,7 @@ function Controller(){
           $('.questionModal').unbind('click');
           // $('.readyButton').unbind('click');
 
-          clearInterval(this.model.roundTimer)
+          // clearInterval(this.model.roundTimer)
 
 
           initialize();
