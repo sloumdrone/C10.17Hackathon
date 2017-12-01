@@ -17,7 +17,6 @@ body {
     overflow: hidden;
 }
 
-
 /*****************  player selection modal ******************/
 
 .playerOnHoverLeft, .playerOnHoverRight {
@@ -37,7 +36,7 @@ body {
 }
 
 .playerContainer {
-    height: 75vh;
+    height: 72vh;
     width: 30vw;
     top: 2.5vh;
     position: absolute;
@@ -45,6 +44,18 @@ body {
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
+}
+
+@keyframes spinner {
+    0% {
+      transform: rotateY(0deg);
+    }
+    50% {
+      transform: rotateY(180deg);
+    }
+    100% {
+      transform: rotateY(0deg);
+    }
 }
 
 .infoTextContainer {
@@ -67,6 +78,26 @@ body {
 .infoHeaderOccupation{
     color: yellow;
 }
+
+.characterName {
+    font-family: fighting;
+    font-size: 6vmin;
+    color: #c7f62d;
+    position: absolute;
+    top: 70vh;
+    width: 25%;
+    text-align: center;
+    text-shadow: 5px 5px 10px black;
+}
+
+.characterNameLeft {
+    left: 2.5vw;
+}
+
+.characterNameRight {
+    right: 3vw;
+}
+
 .playerInfo {
     font-family: 'Ubuntu', sans-serif;
     height: 20vh;
@@ -299,7 +330,10 @@ h1 {
     background-position: center;
     transition: 2s;
 }
-
+.left{
+    position: absolute;
+    right: 0;
+}
 .statsContainer {
     height: 17vh;
     width: 100vw;
@@ -480,7 +514,7 @@ h1 {
     width: 25vw;
     height: 80vh;
     position: absolute;
-    transform: scaleX(-1);
+    /*transform: scaleX(-1);*/
     animation: spin 4s infinite;
     animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 1.5);
     animation-iteration-count: 1;

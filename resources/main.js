@@ -1,6 +1,5 @@
-
-
 $(document).ready(initialize);
+
 
 function initialize(){
     var game = new GameModel();
@@ -17,18 +16,29 @@ function initialize(){
     $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
 }
 
+
 function addClickHandlers(game, view, controller){
     $('.playerAvatar').click(function(){
         if (game.avatarClickable){
-            console.log(game.turn);
+            if (game.turn === 1){
+              $('.playerContainerLeft').css({'animation': 'spinner 6s infinite',
+              'animation-timing-function': 'linear'});
+            } else {
+              $('.playerContainerRight').css({'animation': 'spinner 6s infinite',
+              'animation-timing-function': 'linear'})
+            }
             var characterSelection = $(event.target).attr('id');
             game.addPlayer(characterSelection);
             view.addOutlineToSelectedPlayer();
         }
     });
+
+
     $('.questionModal').on('click', '.answer', function(){
         controller.selectAnswer(this, view)
     });
+
+
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
         game.roundTime=60;
@@ -174,7 +184,7 @@ function GameModel(){
       'shipinterior.gif',
       'water-fall.gif',
       'wood-ruins.gif'
-    ]
+    ];
 
     this.addPlayer = function(character){
         //take selection from player select screen and add that character for that player
@@ -209,6 +219,7 @@ function View(model){
   //all of our functions for updating the view will go here
 
     this.showEndgameWinner = function() {
+        clearInterval(model.roundTimer);
         var winner;
         var winnerImg;
 
@@ -343,6 +354,7 @@ function View(model){
                 var characterImg = $(event.target).attr('id');
                 if (model.turn === 1) {
                     $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.characterNameLeft').text(model.availableCharacters[characterImg].name);
                     $('.infoHeaderName').text('Real Name: ');
                     $('#realNameLeft').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                     $('.infoHeaderPower').text('Power: ');
@@ -351,6 +363,7 @@ function View(model){
                     $('#occupationLeft').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 } else {
                     $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.characterNameRight').text(model.availableCharacters[characterImg].name);
                     $('.infoHeaderName').text('Real Name: ');
                     $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                     $('.infoHeaderPower').text('Power: ');
@@ -439,7 +452,7 @@ function Controller(model,view){
         hpTarget = model.players[1]['hitPoints']
     }
     view.renderDmg(hpTarget);
-    if(model.questionBank===0 || model.players['1']['hitPoints']===0 ||  model.players['2']['hitPoints']===0){
+    if(model.questionBank===0 || model.players['1']['hitPoints']<=0 ||  model.players['2']['hitPoints']<=0){
         this.checkWinState();
     }
 
