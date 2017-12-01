@@ -220,6 +220,7 @@ function View(model){
 
     this.showEndgameWinner = function() {
         clearInterval(model.roundTimer);
+        $('.readyButton span').text('P1');
         var winner;
         var winnerImg;
 
