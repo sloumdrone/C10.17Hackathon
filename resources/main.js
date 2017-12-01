@@ -1,6 +1,5 @@
-
-
 $(document).ready(initialize);
+
 
 function initialize(){
     var game = new GameModel();
@@ -17,18 +16,29 @@ function initialize(){
     $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
 }
 
+
 function addClickHandlers(game, view, controller){
     $('.playerAvatar').click(function(){
         if (game.avatarClickable){
-            console.log(game.turn);
+            if (game.turn === 1){
+              $('.playerContainerLeft').css({'animation': 'spinner 6s infinite',
+              'animation-timing-function': 'linear'});
+            } else {
+              $('.playerContainerRight').css({'animation': 'spinner 6s infinite',
+              'animation-timing-function': 'linear'})
+            }
             var characterSelection = $(event.target).attr('id');
             game.addPlayer(characterSelection);
             view.addOutlineToSelectedPlayer();
         }
     });
+
+
     $('.questionModal').on('click', '.answer', function(){
         controller.selectAnswer(this, view)
     });
+
+
     $('.readyButton').on('click',function(){
         clearInterval(game.roundTimer);
         controller.questionBank(game.questions);
