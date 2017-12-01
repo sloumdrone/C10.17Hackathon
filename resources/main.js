@@ -14,6 +14,7 @@ function initialize(){
     view.handleAvatarHover();
     controller.buildCharacterInfo();
     $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
+    console.log('Round timer: ' + game.roundTimer,'round time: ' + game.roundTime, 'HTML timer text:' + $('.timer').text());
 }
 
 
@@ -37,6 +38,10 @@ function addClickHandlers(game, view, controller){
     $('.questionModal').on('click', '.answer', function(){
         controller.selectAnswer(this, view)
     });
+
+    $('.playAgain').click(function(){
+      location.reload();
+    })
 
 
     $('.readyButton').on('click',function(){
@@ -234,16 +239,12 @@ function View(model){
             winnerImg = model.players['2']['character']['img']
             winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
+
         controller.getQuote(winner, winnerImg, winnerSex);
 
+        $('.gameBoard').fadeOut(1500);
+        $('.winnerModal').fadeIn(1500);
 
-            $('.gameBoard').fadeOut(1500);
-            $('.winnerModal').fadeIn(1500);
-
-
-        //wait a few seconds
-        //add the win quote for the character to the win modal
-        //show the win modal
     };
 
     var controller=null;
@@ -643,5 +644,3 @@ function Controller(model,view){
       }
 
 }
-
-
