@@ -65,6 +65,7 @@ function GameModel(){
         //2 : Player {}
         //built using the add
     };
+    this.quoteGenerated = false;   // flag for Chuck Norris quote ajax call
     var controller = null;
     this.setController = function(control){
         controller = control;
@@ -234,12 +235,12 @@ function View(model){
             winnerImg = model.players['2']['character']['img'];
             winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
-        controller.getQuote(winner, winnerImg, winnerSex);
 
 
-            $('.gameBoard').fadeOut(1500);
-            $('.winnerModal').fadeIn(1500);
+        controller.getQuote(winner, winnerImg, winnerSex, model.quoteGenerated);
 
+        $('.gameBoard').fadeOut(1500);
+        $('.winnerModal').fadeIn(1500);
 
         //wait a few seconds
         //add the win quote for the character to the win modal
@@ -571,59 +572,65 @@ function Controller(model,view){
         }
     };
 
-    this.getQuote = function(winner, winnerImg, winnerSex) {
+    this.getQuote = function(winner, winnerImg, winnerSex, quoteGenerated) {
         var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"]
         var randomNum = Math.floor(Math.random() * categories.length);
         var randomCategory = categories[randomNum];
 
 
+        console.log(quoteGenerated);
+        console.log(quoteGenerated);
+        if(!quoteGenerated) {
 
-        $.ajax({
-            method: 'get',
-            url: 'https://api.chucknorris.io/jokes/random',
-            dataType: 'json',
-            data: {'category': randomCategory},
-            success: function (quote) {
-                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
-                var chuckNorrisQuote = quote.value;
+            quoteGenerated = true;
 
-                var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
-                var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
+            $.ajax({
+                method: 'get',
+                url: 'https://api.chucknorris.io/jokes/random',
+                dataType: 'json',
+                data: {'category': randomCategory},
+                success: function (quote) {
+                    var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                    var chuckNorrisQuote = quote.value;
 
-                var regEx2 = new RegExp('chuck', 'ig');
-                winnerQuote = winnerQuote.replace(regEx2, winner);  //change the word 'chuck' with winner's name
+                    var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                    var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
 
-                var regEx3 = new RegExp('norris', 'ig');
-                winnerQuote = winnerQuote.replace(regEx3, winner);  //change the word 'norris' with winner's name
+                    var regEx2 = new RegExp('chuck', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx2, winner);  //change the word 'chuck' with winner's name
 
-                if(winnerSex === 'Female'){  //if the sex of the winner is female, change the words 'his' and 'he' to 'her' and 'she'
-                    var regEx4 = new RegExp('he', 'ig');
-                    winnerQuote = winnerQuote.replace(regEx4, 'she');
+                    var regEx3 = new RegExp('norris', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx3, winner);  //change the word 'norris' with winner's name
 
-                    var regEx5 = new RegExp('his', 'ig');
-                    winnerQuote = winnerQuote.replace(regEx5, 'hers');
+                    if (winnerSex === 'Female') {  //if the sex of the winner is female, change the words 'his' and 'he' to 'her' and 'she'
+                        var regEx4 = new RegExp('he', 'ig');
+                        winnerQuote = winnerQuote.replace(regEx4, 'she');
 
-                    var regEx6 = new RegExp('him', 'ig');
-                    winnerQuote = winnerQuote.replace(regEx6, 'her');
+                        var regEx5 = new RegExp('his', 'ig');
+                        winnerQuote = winnerQuote.replace(regEx5, 'hers');
 
+                        var regEx6 = new RegExp('him', 'ig');
+                        winnerQuote = winnerQuote.replace(regEx6, 'her');
+
+                    }
+
+                    // find all winner's name and color it to lime green;
+                    var findTheName = winner;
+                    var replaceAllName = new RegExp(findTheName, 'g');
+                    var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
+                    console.log(winner)
+                    console.log('winnerQuote', winnerQuote);
+                    // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
+
+
+                    $('.chuckNorrisQuote p').append(greenTxt);
+                    $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
+                },
+                error: function () {
+                    console.warn('something went wrong!');
                 }
-
-                // find all winner's name and color it to lime green;
-                var findTheName = winner;
-                var replaceAllName = new RegExp(findTheName, 'g');
-                var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
-                console.log(winner)
-                console.log('winnerQuote', winnerQuote);
-                // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
-
-
-                $('.chuckNorrisQuote p').append(greenTxt);
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
-            },
-            error: function () {
-                console.warn('something went wrong!');
-            }
-        });
+            });
+        }
     };
 
       this.selectAnswer = function (element) {
