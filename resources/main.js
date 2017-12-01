@@ -634,7 +634,7 @@ function Controller(model,view){
                 var findTheName = winner;
                 var replaceAllName = new RegExp(findTheName, 'g');
                 var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
-                console.log(winner)
+                console.log(winner);
                 console.log('winnerQuote', winnerQuote);
                 // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
 
