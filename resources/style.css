@@ -27,6 +27,7 @@ body {
 }
 
 .modalContainer {
+    /*display:none;*/
     height: 100vh;
     width: 100vw;
     position: relative;
@@ -609,3 +610,30 @@ h1 {
 .readyButton:hover {
   border: 7px solid yellow;
 }
+
+/*********************** Ready modal ************************/
+
+/*.loading{*/
+    /*height: 100vh;*/
+    /*width: 100vw;*/
+    /*background-image: url('images/backgrounds/particleBG.gif');*/
+    /*background-position: center;*/
+    /*background-size: cover;*/
+    /*background-color: #475eff;*/
+    /*position: relative;*/
+/*}*/
+
+/*.loader{*/
+    /*top:50%;*/
+    /*left: 50%;*/
+
+    /*transform: translate(-50%, -50%);*/
+    /*font-size: 8vmin;*/
+    /*color: white;*/
+    /*position: absolute;*/
+    /*font-family: ss4;*/
+    /*letter-spacing: 5px;*/
+/*}*/
+
+
+

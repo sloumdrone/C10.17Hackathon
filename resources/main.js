@@ -1,19 +1,13 @@
 $(document).ready(initialize);
 
+var controller = null;
+console.log(' *********** controller initializing', controller);
 
 function initialize(){
-    var game = new GameModel();
-    var view = new View(game);
-    var controller = new Controller(game);
-    game.setController(controller);
-    game.setView(view);
-    view.setController(controller);
-    controller.setView(view);
-    controller.buildQuestionShoe();
-    addClickHandlers(game, view,controller);
-    view.handleAvatarHover();
-    controller.buildCharacterInfo();
-    $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
+    controller = null;
+    controller = new Controller();
+    controller.init();
+    $('.restart').on('click', controller.restartGame.bind(this));
 }
 
 
@@ -33,11 +27,9 @@ function addClickHandlers(game, view, controller){
         }
     });
 
-
     $('.questionModal').on('click', '.answer', function(){
         controller.selectAnswer(this, view)
     });
-
 
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
@@ -47,35 +39,35 @@ function addClickHandlers(game, view, controller){
 
         $('.questionModal').addClass('questionModalShow');
     });
+
+
+
 }
 
 
 function GameModel(){
-    this.gameState = 'playerSelection'; //playerSelection, loading, trivia, ready, endgame
-    this.avatarClickable = true;
-    this.playButtonClickable = false;
-    this.bothPlayersSelected = false;
-    this.turn = 1;
-    this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-    // this.questionsLeft = 10; //tracks the number of questions asked
-    this.roundTimer = null;
-    this.questions = {};
-    this.players = {
-        //1 : Player {}
-        //2 : Player {}
-        //built using the add
+
+    this.init = function (view){
+        this.view = view;
+        this.gameState = 'playerSelection'; //playerSelection, loading, trivia, ready, endgame
+        this.avatarClickable = true;
+        this.playButtonClickable = false;
+        this.bothPlayersSelected = false;
+        this.turn = 1;
+        this.roundTime = 60; //just a starting number, tracks amount of time left in round;
+        // this.questionsLeft = 10; //tracks the number of questions asked
+        this.roundTimer = null;
+        this.questions = {};
+        this.players = {
+            //1 : Player {}
+            //2 : Player {}
+            //built using the add
+        };
+        this.quoteGenerated = false;   // flag for Chuck Norris quote ajax call
+
+
     };
-    this.quoteGenerated = false;   // flag for Chuck Norris quote ajax call
-    var controller = null;
-    this.setController = function(control){
-        controller = control;
-        delete this.setController;
-    };
-    var view = null;
-    this.setView = function(viewer){
-        view = viewer;
-        delete this.setView;
-    };
+
 
     this.backgrounds = [
       'sewers.gif',
@@ -194,8 +186,9 @@ function GameModel(){
         } else {
             this.gameState = 'loading';
             this.avatarClickable = false;
-            view.activePlayButton();
+            this.view.activePlayButton();
             this.bothPlayersSelected = true;
+            console.log(this.players)
             //display loading screen
             //gather trivia questions based on characters
             //when done, load function will trigger ready state
@@ -206,20 +199,18 @@ function GameModel(){
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
     this.character = game.availableCharacters[characterSelection];
-    this.trivia = {}; //object of arrays of objects
-    this.getWinQuote = function(characterName){
-        //calls chuck norris api
-        //replaces chuck norris with character characterName
-        //returns info
-    }
+    console.log(game.players);
 
 }
 
-function View(model){
+function View(model, controller){
+    var that = this;
+    that.model = model;
+    that.controller = controller;
   //all of our functions for updating the view will go here
 
-    this.showEndgameWinner = function() {
-        clearInterval(model.roundTimer);
+    that.showEndgameWinner = function() {
+        clearInterval(this.model.roundTimer);
         $('.readyButton span').text('P1');
         var winner;
         var winnerImg;
@@ -227,39 +218,32 @@ function View(model){
         if (model.players['1']['hitPoints'] > 0) {
             // winner = model.players['1']['name'];
             winner = model.players['1']['character']['name'];
-            winnerImg = model.players['1']['character']['img'];
-            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
+            winnerImg = this.model.players['1']['character']['img'];
+            winnerSex = this.model.players[1]['character']['characterInfo']['appearance']['gender'];
         } else {
             // winner = model.players['2']['name'];
-            winner = model.players['2']['character']['name'];
-            winnerImg = model.players['2']['character']['img'];
-            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
+            winner = this.model.players['2']['character']['name'];
+            winnerImg = this.model.players['2']['character']['img'];
+            winnerSex = this.model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
 
-
-        controller.getQuote(winner, winnerImg, winnerSex, model.quoteGenerated);
-
+        if($('.chuckNorrisQuote p').text() === '') {
+            controller.getQuote(winner, winnerImg, winnerSex, model.quoteGenerated);
+        }
         $('.gameBoard').fadeOut(1500);
         $('.winnerModal').fadeIn(1500);
-
-        //wait a few seconds
-        //add the win quote for the character to the win modal
-        //show the win modal
     };
 
-    var controller=null;
-    this.setController = function(control){
-        controller = control;
-        delete this.setController;
-    };
 
-    this.renderQuestion = function(qArray){ //renders Question and answers into Arena
+
+    that.renderQuestion = function(qArray){ //renders Question and answers into Arena
         $('.answer').remove();
         var entry = qArray.shift();
         var category = entry.category;
-        var question = controller.domParser(entry.question);//parses html entities from api string
+        var question = that.controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
+        console.log(correctAns);
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
         // model.questionsLeft--;
@@ -271,20 +255,20 @@ function View(model){
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        if(model.questionBank.length===0){
+        if(that.model.questionBank.length===0){
             $('.questionModal').removeClass('questionModalShow');
-            clearInterval(model.roundTimer);
+            clearInterval(that.model.roundTimer);
             //wincheckstate & player change
-            if(model.turn===1){
+            if(that.model.turn===1){
                 $('.readyButton span').text('P2')
             }else{
                 $('.readyButton span').text('P1')
             }
-            controller.checkWinState();
+            this.controller.checkWinState();
         }
     };
 
-    this.createAnsDiv=function(num,text, entry){
+    that.createAnsDiv=function(num,text, entry){
         var ansDiv= $('<div>',{
             id: 'q'+num,
             'class': 'answer',
@@ -300,8 +284,8 @@ function View(model){
         $('.questionModal').append(ansDiv)
     };
 
-    this.renderDmg = function(amount){
-        if(model.turn === 1){
+    that.renderDmg = function(amount){
+        if(that.model.turn === 1){
             currentHpBar = $('.right');
 
         }else{
@@ -310,18 +294,19 @@ function View(model){
         currentHpBar.css('width', amount+"%") //reduces the width by the percentage of the dmg.
     };
 
-    this.addOutlineToSelectedPlayer = function(){
+    that.addOutlineToSelectedPlayer = function(){
         $(event.target).addClass('playerAvatarClicked');
     };
 
-    this.activePlayButton = function(){
-
-        model.playButtonClickable = true;
+    that.activePlayButton = function(){
+        console.log('inside the button',that.model);
+        that.model.playButtonClickable = true;
         $('.playButton').click(function(){
-            if(model.playButtonClickable) {
-              model.playButtonClickable = false;
-              model.avatarClickable = false;
-              model.turn = 1;
+            if(that.model.playButtonClickable) {
+                console.log('inside of play button click function');
+              that.model.playButtonClickable = false;
+              that.model.avatarClickable = false;
+              that.model.turn = 1;
 
 
               $('.modalContainer').hide();
@@ -336,11 +321,11 @@ function View(model){
         this.renderHeroInArena(model.players);
     };
 
-    this.handleAvatarHover = function (){
+    that.handleAvatarHover = function (){
         $('.playerAvatar').hover(function () {
-            if (model.bothPlayersSelected === false) {
+            if (that.model.bothPlayersSelected === false) {
                 var characterImg = $(event.target).attr('id');
-                if (model.turn === 1) {
+                if (that.model.turn === 1) {
                     $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
                     $('.characterNameLeft').text(model.availableCharacters[characterImg].name);
                     $('.infoHeaderName').text('Real Name: ');
@@ -360,7 +345,7 @@ function View(model){
                     $('#occupationRight').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 }
             }
-        }, function () {
+        }.bind(this), function () {
             if (model.turn === 1) {
                 $('.playerContainerLeft').removeClass('playerPhotoLeft');
             } else {
@@ -369,19 +354,19 @@ function View(model){
         });
     };
 
-    this.renderHeroInArena = function(players){   //renders each players img to main game board arena
+    that.renderHeroInArena = function(players){   //renders each players img to main game board arena
         $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
     };
 
-    this.renderTimer = function(){   // renders the timer for each player
-        model.roundTimer  = setInterval(function() {
-            model.roundTime--;
-            $('.currentTime').text(model.roundTime);
-            if(model.roundTime===0){
+    that.renderTimer = function(){   // renders the timer for each player
+        that.model.roundTimer  = setInterval(function() {
+            that.model.roundTime--;
+            $('.currentTime').text(that.model.roundTime);
+            if(that.model.roundTime===0){
                 $('.questionModal').removeClass('questionModalShow');
-                clearInterval(model.roundTimer);
-                if(model.turn===1){
+                clearInterval(that.model.roundTimer);
+                if(that.model.turn===1){
                     $('.readyButton span').text('P2')
                 }else{
                     $('.readyButton span').text('P1')
@@ -394,7 +379,22 @@ function View(model){
 }
 
 
-function Controller(model,view){
+function Controller(){
+    this.model = null;
+    this.view = null;
+
+    this.init = function(){
+        this.model = new GameModel(this.view);
+        this.view = new View(this.model, this);
+        this.model.init(this.view);
+
+        this.buildQuestionShoe();
+        addClickHandlers(this.model, this.view, this);
+        this.view.handleAvatarHover();
+        this.buildCharacterInfo();
+        $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + this.model.gameBoardBackgrounds[Math.floor(Math.random()*this.model.gameBoardBackgrounds.length)] + '")');
+
+    };
 
     this.questionBank = function(questionsObj){
         var qBank = [];
@@ -420,23 +420,23 @@ function Controller(model,view){
                     qBank.push(qA)
                 }
             }
-        model.questionBank = qBank;
-        view.renderQuestion(model.questionBank);
+        this.model.questionBank = qBank;
+        this.view.renderQuestion(this.model.questionBank);
     };
 
 
   this.dealDamage = function(amount){
-    model.turn === 1
-    ? model.players[model.turn + 1]['hitPoints'] -= amount
-    : model.players[model.turn - 1]['hitPoints'] -= amount;
+    this.model.turn === 1
+    ? this.model.players[this.model.turn + 1]['hitPoints'] -= amount
+    : this.model.players[this.model.turn - 1]['hitPoints'] -= amount;
     var hpTarget= null;
-    if(model.turn===1){
-        hpTarget = model.players[2]['hitPoints']
+    if(this.model.turn===1){
+        hpTarget = this.model.players[2]['hitPoints']
     }else{
-        hpTarget = model.players[1]['hitPoints']
+        hpTarget = this.model.players[1]['hitPoints']
     }
-    view.renderDmg(hpTarget);
-    if(model.questionBank===0 || model.players['1']['hitPoints']<=0 ||  model.players['2']['hitPoints']<=0){
+    this.view.renderDmg(hpTarget);
+    if(this.model.questionBank===0 || this.model.players['1']['hitPoints']<=0 ||  this.model.players['2']['hitPoints']<=0){
         this.checkWinState();
     }
 
@@ -461,13 +461,6 @@ function Controller(model,view){
       return damagePercent
   };
 
-    var view = null;
-    this.setView = function (viewer) {
-        view = viewer;
-        delete this.setView;
-    };
-
-
   this.getSessionToken = function(){  //avoids receiving same question w/in 6 hour period
       $.ajax({
           method: 'GET',
@@ -478,7 +471,7 @@ function Controller(model,view){
           },
           success: function(data){
              if(data.response_code ===0 ){
-                model.token = data.token;
+                this.model.token = data.token;
              }else{
                  console.error('server response'+ data.response_code +" "+data.response_message);
              }
@@ -490,31 +483,44 @@ function Controller(model,view){
   };
 
   this.checkWinState = function() {
-      if(model.questions['easy'].length<10 ||model.questions['medium'].length<10 ||model.questions['hard'].length<10){
-          if(model.players[1].hitPoints>model.players[2]){
-              model.gameState = 'endgame';
-              model.players[2].hitPoints=0;
-              view.showEndgameWinner()
+      if(this.model.questions['easy'].length<10 ||this.model.questions['medium'].length<10 ||this.model.questions['hard'].length<10){
+          if(this.model.players[1].hitPoints>this.model.players[2]){
+              this.model.gameState = 'endgame';
+              this.model.players[2].hitPoints=0;
+              this.view.showEndgameWinner()
+              clearInterval(this.model.roundTimer)
+              this.model.players[1].hitPoints=100;
+              this.model.players[2].hitPoints=100;
+
           }else{
-              model.players[1].hitPoints=0;
-              view.showEndgameWinner()
+              this.model.players[1].hitPoints=0;
+              this.view.showEndgameWinner()
+              clearInterval(this.model.roundTimer)
+              this.model.players[1].hitPoints=100;
+              this.model.players[2].hitPoints=100;
           }
       }
-      if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-          model.gameState = 'endgame';
-          view.showEndgameWinner();
+      if (this.model.players['1']['hitPoints'] <= 0 || this.model.players['2']['hitPoints'] <= 0) {
+          this.model.gameState = 'endgame';
+          this.view.showEndgameWinner();
+          clearInterval(this.model.roundTimer)
+          this.model.players[1].hitPoints=100;
+          this.model.players[2].hitPoints=100;
       } else {
-          if (model.turn === 1) {
-              model.turn += 1;
+          if (this.model.turn === 1) {
+              this.model.turn += 1;
           } else {
-              model.turn -= 1;
+              this.model.turn -= 1;
           }
+          clearInterval(this.model.roundTimer);
           $('.readyBanner').slideDown('slow');
-          this.questionBank(model.questions)
+          this.questionBank(this.model.questions)
       }
   };
 
       this.retrieveQuestions = function (diff) {
+          var self = this;
+          var that = this;
           $.ajax({
               method: 'GET',
               dataType: 'JSON',
@@ -522,21 +528,27 @@ function Controller(model,view){
                   'amount': 50,
                   difficulty: diff,
                   type: 'multiple',
-                  token: model.token
+                  token: this.model.token
               },
               url: 'https://opentdb.com/api.php',
               success: function (data) {
+                  $(self).unbind();
+                  console.log(data);
                   if (data.response_code === 0) {
-                      model.questions[diff] = data.results;
+                      console.log('inside the retrieveQuestions',this.model);
+                      that.model.questions[diff] = data.results;
                   } else {
                       alert('Issue with question retrieval. Response code: ' + data.response_code);
                   }
-              },
+              }.bind(self),
               error: function () {
                   console.warn('error input');
               }
           });
       };
+
+
+
       this.buildQuestionShoe = function () {
           var difficulty = ['easy', 'medium', 'hard'];
 
@@ -547,7 +559,7 @@ function Controller(model,view){
       };
 
 
-    this.getCharacterInfo = function (character) {
+    this.getCharacterInfo = function (character, model) {
         $.ajax({
             method: 'post',
             url: 'http://danielpaschal.com/lfzproxy.php',
@@ -567,88 +579,136 @@ function Controller(model,view){
     };
 
     this.buildCharacterInfo = function() {
-        for (var character in model.availableCharacters) {
-            this.getCharacterInfo(character);
+        for (var character in this.model.availableCharacters) {
+            this.getCharacterInfo(character, this.model);
         }
     };
 
-    this.getQuote = function(winner, winnerImg, winnerSex, quoteGenerated) {
+    this.getQuote = function(winner, winnerImg, winnerSex) {
         var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"]
         var randomNum = Math.floor(Math.random() * categories.length);
         var randomCategory = categories[randomNum];
-
-
-        console.log(quoteGenerated);
-        console.log(quoteGenerated);
-        if(!quoteGenerated) {
-
-            quoteGenerated = true;
-
+        var self = this;
+        var that = this;
+        event.preventDefault();
+        // console.log('1',quoteGenerated);
             $.ajax({
                 method: 'get',
                 url: 'https://api.chucknorris.io/jokes/random',
                 dataType: 'json',
                 data: {'category': randomCategory},
-                success: function (quote) {
-                    var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
-                    var chuckNorrisQuote = quote.value;
-
-                    var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
-                    var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
-
-                    var regEx2 = new RegExp('chuck', 'ig');
-                    winnerQuote = winnerQuote.replace(regEx2, winner);  //change the word 'chuck' with winner's name
-
-                    var regEx3 = new RegExp('norris', 'ig');
-                    winnerQuote = winnerQuote.replace(regEx3, winner);  //change the word 'norris' with winner's name
-
-                    if (winnerSex === 'Female') {  //if the sex of the winner is female, change the words 'his' and 'he' to 'her' and 'she'
-                        var regEx4 = new RegExp('he', 'ig');
-                        winnerQuote = winnerQuote.replace(regEx4, 'she');
-
-                        var regEx5 = new RegExp('his', 'ig');
-                        winnerQuote = winnerQuote.replace(regEx5, 'hers');
-
-                        var regEx6 = new RegExp('him', 'ig');
-                        winnerQuote = winnerQuote.replace(regEx6, 'her');
-
-                    }
-
-                    // find all winner's name and color it to lime green;
-                    var findTheName = winner;
-                    var replaceAllName = new RegExp(findTheName, 'g');
-                    var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
-                    console.log(winner)
-                    console.log('winnerQuote', winnerQuote);
-                    // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
-
-
-                    $('.chuckNorrisQuote p').append(greenTxt);
-                    $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
-                },
+                success: function (data) {
+                    $(self).unbind();
+                    console.log('original', data.value);
+                    that.renderQuote(data.value,winner, winnerImg, winnerSex);
+                }.bind(self),
                 error: function () {
                     console.warn('something went wrong!');
                 }
             });
-        }
+
     };
 
       this.selectAnswer = function (element) {
           var specialty = false;
 
           if (element.answer === 'correct') {
-              if (element.category === model.players[model.turn].character.category) {
+              if (element.category === this.model.players[this.model.turn].character.category) {
                   specialty = true;
               }
               this.dealDamage(this.dmgCalculator(element.difficulty, specialty));
           }
-          view.renderQuestion(model.questionBank);
+          this.view.renderQuestion(this.model.questionBank);
       };
       this.domParser = function (input) {
           var doc = new DOMParser().parseFromString(input, "text/html");
           return doc.documentElement.textContent;
       }
 
-}
+      this.renderQuote = function(quote, winner, winnerImg, winnerSex){
+          var chuckNorrisQuote = quote;
 
+          var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+          var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
+
+          var regEx2 = new RegExp('chuck', 'ig');
+          winnerQuote = winnerQuote.replace(regEx2, winner);  //change the word 'chuck' with winner's name
+
+          var regEx3 = new RegExp('norris', 'ig');
+          winnerQuote = winnerQuote.replace(regEx3, winner);  //change the word 'norris' with winner's name
+
+          if (winnerSex === 'Female') {  //if the sex of the winner is female, change the words 'his' and 'he' to 'her' and 'she'
+              var regEx4 = new RegExp('he', 'ig');
+              winnerQuote = winnerQuote.replace(regEx4, 'she');
+
+              var regEx5 = new RegExp('his', 'ig');
+              winnerQuote = winnerQuote.replace(regEx5, 'hers');
+
+              var regEx6 = new RegExp('him', 'ig');
+              winnerQuote = winnerQuote.replace(regEx6, 'her');
+
+          }
+
+          // find all winner's name and color it to lime green;
+          var findTheName = winner;
+          var replaceAllName = new RegExp(findTheName, 'g');
+          var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
+          console.log(winner)
+          console.log('winnerQuote', winnerQuote);
+          // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
+
+
+          $('.chuckNorrisQuote p').append(greenTxt);
+          $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
+      }
+
+      this.restartGame = function(){
+          console.log('restart game works')
+
+
+          console.log('this       : ', this)
+
+          $('.winnerModal').hide();
+          $('.modalContainer').show();
+
+
+          $('.playerContainerLeft').css('background-image', "none");
+          $('.characterNameLeft').text('');
+          $('.infoHeaderName').text('');
+          $('#realNameLeft').text('');
+          $('.infoHeaderPower').text('');
+          $('#categoryIDLeft').text('');
+          $('.infoHeaderOccupation').text('');
+          $('#occupationLeft').text('');
+
+          $('.playerContainerRight').css('background-image', "none");
+          $('.characterNameRight').text('');
+          $('.infoHeaderNameRight').text('');
+          $('#realNameRight').text('');
+          $('.infoHeaderPowerRight').text('');
+          $('#categoryIDRight').text('');
+          $('.infoHeaderOccupationRight').text('');
+          $('#occupationRight').text('');
+
+          $('.left').css('width', "100%");
+          $('.right').css('width', "100%");
+
+
+          $('.playerAvatar').removeClass('playerAvatarClicked');
+
+
+          $('.restart').unbind('click');
+          $('.playerAvatar').unbind('hover');
+          $('.playerAvatar').unbind('click');
+          $('.questionModal').unbind('click');
+          $('.readyButton').unbind('click');
+
+          // clearInterval(this.model.roundTimer)
+
+
+          initialize();
+
+      };
+
+}
 
