@@ -235,12 +235,12 @@ function View(model){
             winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
         controller.getQuote(winner, winnerImg, winnerSex);
-        setTimeout(function () {
 
-            $('.gameBoard').hide();
-            $('.winnerModal').show();
 
-        }, 500)
+            $('.gameBoard').fadeOut(1500);
+            $('.winnerModal').fadeIn(1500);
+
+
         //wait a few seconds
         //add the win quote for the character to the win modal
         //show the win modal
