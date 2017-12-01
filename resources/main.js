@@ -30,11 +30,14 @@ function addClickHandlers(game, view, controller){
         controller.selectAnswer(this, view)
     });
     $('.readyButton').on('click',function(){
+        game.roundTime=21;
+        view.renderTimer(game.roundTime);
         controller.questionBank(game.questions);
         $('.readyBanner').fadeOut();
         $('.questionModal').css('opacity', '1');
+
         console.log(game.roundTime);
-        view.renderTimer(game.roundTime);
+
     });
 }
 
@@ -228,7 +231,7 @@ function View(model){
             $('.gameBoard').hide();
             $('.winnerModal').show();
 
-        }, 3000)
+        }, 500)
         //wait a few seconds
         //add the win quote for the character to the win modal
         //show the win modal
@@ -550,10 +553,17 @@ function Controller(model,view){
     };
 
     this.getQuote = function(winner, winnerImg) {
+        var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"]
+        var randomNum = Math.floor(Math.random() * categories.length);
+        var randomCategory = categories[randomNum];
+
+
+
         $.ajax({
             method: 'get',
             url: 'https://api.chucknorris.io/jokes/random',
             dataType: 'json',
+            data: {'category': randomCategory},
             success: function (quote) {
                 console.log('original', quote.value);
                 var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
