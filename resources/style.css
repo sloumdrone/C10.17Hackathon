@@ -17,7 +17,6 @@ body {
     overflow: hidden;
 }
 
-
 /*****************  player selection modal ******************/
 
 .playerOnHoverLeft, .playerOnHoverRight {
@@ -299,7 +298,10 @@ h1 {
     background-position: center;
     transition: 2s;
 }
-
+.left{
+    position: absolute;
+    right: 0;
+}
 .statsContainer {
     height: 17vh;
     width: 100vw;
