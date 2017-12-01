@@ -2,6 +2,9 @@ $(document).ready(initialize);
 
 
 function initialize(){
+    $('*').attr('style','').removeClass('playerAvatarClicked');
+    $('.emptyMe').empty();
+
     var game = new GameModel();
     var view = new View(game);
     var controller = new Controller(game);
@@ -37,6 +40,10 @@ function addClickHandlers(game, view, controller){
     $('.questionModal').on('click', '.answer', function(){
         controller.selectAnswer(this, view)
     });
+
+    $('.playAgain').click(function(){
+      initialize();
+    })
 
 
     $('.readyButton').on('click',function(){
