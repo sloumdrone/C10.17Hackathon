@@ -30,14 +30,13 @@ function addClickHandlers(game, view, controller){
         controller.selectAnswer(this, view)
     });
     $('.readyButton').on('click',function(){
-        game.roundTime=21;
-        view.renderTimer(game.roundTime);
         controller.questionBank(game.questions);
+        game.roundTime=60;
+        view.renderTimer();
         $('.readyBanner').fadeOut();
-        $('.questionModal').css('opacity', '1');
 
+        $('.questionModal').addClass('questionModalShow');
         console.log(game.roundTime);
-
     });
 }
 
@@ -48,7 +47,7 @@ function GameModel(){
     this.playButtonClickable = false;
     this.bothPlayersSelected = false;
     this.turn = 1;
-    this.roundTime = 21; //just a starting number, tracks amount of time left in round;
+    this.roundTime = 60; //just a starting number, tracks amount of time left in round;
     // this.questionsLeft = 10; //tracks the number of questions asked
     this.roundTimer = null;
     this.questions = {};
@@ -194,13 +193,10 @@ function GameModel(){
     }
 }
 
-
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
-    this.domHitPoints = $('.hitPoints').css('width');
     this.character = game.availableCharacters[characterSelection];
     this.trivia = {}; //object of arrays of objects
-
     this.getWinQuote = function(characterName){
         //calls chuck norris api
         //replaces chuck norris with character characterName
@@ -220,12 +216,14 @@ function View(model){
             // winner = model.players['1']['name'];
             winner = model.players['1']['character']['name'];
             winnerImg = model.players['1']['character']['img']
+            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         } else {
             // winner = model.players['2']['name'];
             winner = model.players['2']['character']['name'];
             winnerImg = model.players['2']['character']['img']
+            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
-        controller.getQuote(winner, winnerImg);
+        controller.getQuote(winner, winnerImg, winnerSex);
         setTimeout(function () {
 
             $('.gameBoard').hide();
@@ -267,6 +265,7 @@ function View(model){
         }
         // console.log('****after appending + ',qArray);
         if(model.questionBank.length===0){
+            $('.questionModal').removeClass('questionModalShow');
             clearInterval(model.roundTimer);
             //wincheckstate & player change
             if(model.turn===1){
@@ -293,7 +292,7 @@ function View(model){
         }else{
             ansDiv[0].answer = 'correct'
         }
-        $('.answerContainer').append(ansDiv)
+        $('.questionModal').append(ansDiv)
     };
 
     this.renderDmg = function(amount){
@@ -327,6 +326,8 @@ function View(model){
 
 
               $('.modalContainer').hide();
+              $('#p1name').text(model.players[1].character.name);
+              $('#p2name').text(model.players[2].character.name);
               $('.gameBoard').show();
               $('.readyBanner').show('slow');
 
@@ -337,32 +338,38 @@ function View(model){
     };
 
     this.handleAvatarHover = function (){
-            $('.playerAvatar').hover(function () {
-                if (model.bothPlayersSelected === false) {
-                    var characterImg = $(event.target).attr('id');
-                    if (model.turn === 1) {
-                        $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
-                        $('#realNameLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.biography['full-name']);
-                        $('#categoryIDLeft').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationLeft').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
-                    } else {
-                        $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
-                        $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
-                        $('#categoryIDRight').text(' ' + model.availableCharacters[characterImg].category);
-                        $('#occupationRight').text(' ' + model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
-                    }
-                }
-            }, function () {
+        $('.playerAvatar').hover(function () {
+            if (model.bothPlayersSelected === false) {
+                var characterImg = $(event.target).attr('id');
                 if (model.turn === 1) {
-                    $('.playerContainerLeft').removeClass('playerPhotoLeft');
+                    $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.infoHeaderName').text('Real Name: ');
+                    $('#realNameLeft').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                    $('.infoHeaderPower').text('Power: ');
+                    $('#categoryIDLeft').text(model.availableCharacters[characterImg].category);
+                    $('.infoHeaderOccupation').text('Occupation: ');
+                    $('#occupationLeft').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 } else {
-                    $('.playerContainerRight').removeClass('playerPhotoRight');
+                    $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.infoHeaderName').text('Real Name: ');
+                    $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                    $('.infoHeaderPower').text('Power: ');
+                    $('#categoryIDRight').text(model.availableCharacters[characterImg].category);
+                    $('.infoHeaderOccupation').text('Occupation: ');
+                    $('#occupationRight').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 }
-            });
-        };
+            }
+        }, function () {
+            if (model.turn === 1) {
+                $('.playerContainerLeft').removeClass('playerPhotoLeft');
+            } else {
+                $('.playerContainerRight').removeClass('playerPhotoRight');
+            }
+        });
+    };
 
     this.renderHeroInArena = function(players){   //renders each players img to main game board arena
-        console.log('it works');
+        // console.log('it works');
         $('.player1').css('background-image', 'url("resources/images/characters/'+ players[1].character.img+'")');
         $('.player2').css('background-image', 'url("resources/images/characters/'+ players[2].character.img+'")');
     };
@@ -374,7 +381,8 @@ function View(model){
             model.roundTime--;
             $('.currentTime').text(model.roundTime);
             if(model.roundTime===0){
-                console.log('stop');
+                // console.log('stop');
+                $('.questionModal').removeClass('questionModalShow');
                 clearInterval(model.roundTimer);
                 if(model.turn===1){
                     $('.readyButton span').text('P2')
@@ -395,6 +403,10 @@ function Controller(model,view){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
+            if(questionsObj[key].length<10){
+                this.checkWinState(questionsObj[key]);
+                return;
+            }
                 var maxQ = 3;
                 if(key==='easy'){
                     maxQ=4
@@ -481,8 +493,17 @@ function Controller(model,view){
   };
 
   this.checkWinState = function() {
+      if(model.questions['easy'].length<10 ||model.questions['medium'].length<10 ||model.questions['hard'].length<10){
+          if(model.players[1].hitPoints>model.players[2]){
+              model.gameState = 'endgame';
+              model.players[2].hitPoints=0;
+              view.showEndgameWinner()
+          }else{
+              model.players[1].hitPoints=0;
+              view.showEndgameWinner()
+          }
+      }
       if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-          model.clickable = false;//fix this, it is no longer a valid variable name
           model.gameState = 'endgame';
           view.showEndgameWinner();
       } else {
@@ -533,9 +554,13 @@ function Controller(model,view){
 
     this.getCharacterInfo = function (character) {
         $.ajax({
-            method: 'get',
-            url: 'https://cors-anywhere.herokuapp.com/' + 'http://superheroapi.com/api/10159579732380612/' + model.availableCharacters[character].heroID,
+            method: 'post',
+            url: 'http://danielpaschal.com/lfzproxy.php',
             dataType: 'json',
+            data: {
+              url: 'http://superheroapi.com/api/10159579732380612/'+ model.availableCharacters[character].heroID,
+              color: 'lavender'
+            },
             success: function (data) {
                 model.availableCharacters[character].characterInfo = data;
             },
@@ -552,7 +577,7 @@ function Controller(model,view){
         }
     };
 
-    this.getQuote = function(winner, winnerImg) {
+    this.getQuote = function(winner, winnerImg, winnerSex) {
         var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"]
         var randomNum = Math.floor(Math.random() * categories.length);
         var randomCategory = categories[randomNum];
@@ -566,15 +591,42 @@ function Controller(model,view){
             data: {'category': randomCategory},
             success: function (quote) {
                 console.log('original', quote.value);
-                var regEx = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
                 var chuckNorrisQuote = quote.value;
-                var winnerQuote = chuckNorrisQuote.replace(regEx, winner); //change the word 'chuck norris' with winner's name
-                var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
-                $('.chuckNorrisQuote p').append(greenTxt);
 
-                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")')
+
+
+                var regEx1 = new RegExp('chuck norris', 'ig');  //find the word 'chuck norris' in a quote no matter if it's uppercase or lowercase
+                var winnerQuote = chuckNorrisQuote.replace(regEx1, winner); //change the word 'chuck norris' with winner's name
+
+                var regEx2 = new RegExp('chuck', 'ig');
+                winnerQuote = winnerQuote.replace(regEx2, winner);  //change the word 'chuck' with winner's name
+
+                var regEx3 = new RegExp('norris', 'ig');
+                winnerQuote = winnerQuote.replace(regEx3, winner);  //change the word 'norris' with winner's name
+
+                if(winnerSex === 'Female'){  //if the sex of the winner is female, change the words 'his' and 'he' to 'her' and 'she'
+                    var regEx4 = new RegExp('he', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx4, 'she');
+
+                    var regEx5 = new RegExp('his', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx5, 'hers');
+
+                    var regEx6 = new RegExp('him', 'ig');
+                    winnerQuote = winnerQuote.replace(regEx6, 'her');
+
+                }
+
+                // find all winner's name and color it to lime green;
+                var findTheName = winner;
+                var replaceAllName = new RegExp(findTheName, 'g');
+                var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
+                console.log(winner)
                 console.log('winnerQuote', winnerQuote);
-                return winnerQuote;
+                // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
+
+
+                $('.chuckNorrisQuote p').append(greenTxt);
+                $('.winningCharacter').css('background-image', 'url("resources/images/characters/' + winnerImg + '")');
             },
             error: function () {
                 console.log('something went wrong!')
@@ -601,3 +653,5 @@ function Controller(model,view){
       }
 
 }
+
+

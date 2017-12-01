@@ -56,9 +56,17 @@ body {
 }
 
 .infoHeader {
-  color: yellow;
+  color: #ffdd00;
 }
-
+.infoHeaderName{
+    color: yellow;
+}
+.infoHeaderPower{
+    color: yellow;
+}
+.infoHeaderOccupation{
+    color: yellow;
+}
 .playerInfo {
     font-family: 'Ubuntu', sans-serif;
     height: 20vh;
@@ -123,7 +131,7 @@ body {
 
 .infoRow {
   font-size: 2.5vmin;
-  color: white;
+  color: whitesmoke;
   margin: 0.5vh auto;
   text-align: center;
 }
@@ -293,7 +301,7 @@ h1 {
 }
 
 .statsContainer {
-    height: 15vh;
+    height: 17vh;
     width: 100vw;
     position: relative;
 }
@@ -303,7 +311,7 @@ h1 {
     height: 8vh;
     border: 4px solid yellow;
     position: absolute;
-    top: 3%;
+    top: 2vh;
 }
 
 .hitPointsContainerLeft {
@@ -322,7 +330,7 @@ h1 {
     left: 50%;
     transform: translateX(-50%);
     font-family: fighting;
-    background-color: rgba(240,240,240,0.3);
+    background-color: transparent;
     color: blue;
     font-size: 12vmin;
     text-shadow: 0 0 30px white;
@@ -398,8 +406,12 @@ h1 {
     border-radius: 5vmin;
 
     /* Lori added opacity, Brian added opacity on the bgcolor...see if they play nicely together then remove comment */
-    /*opacity: 0;
-    transition: 0.75s;*/
+    opacity: 0;
+    transition: 0.75s;
+}
+
+.questionModalShow {
+    opacity: 1;
 }
 
 
@@ -426,9 +438,10 @@ h1 {
     background-color: rgb(65,61,61);
     color: whitesmoke;
     border-radius: 1vmin;
+    cursor: pointer;
 }
 .answer:hover{
-    background-color: lightpink;
+    background-color: gray;
 }
 
 .category{
