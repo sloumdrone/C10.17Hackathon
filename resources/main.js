@@ -226,12 +226,12 @@ function View(model){
         if (model.players['1']['hitPoints'] > 0) {
             // winner = model.players['1']['name'];
             winner = model.players['1']['character']['name'];
-            winnerImg = model.players['1']['character']['img']
+            winnerImg = model.players['1']['character']['img'];
             winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         } else {
             // winner = model.players['2']['name'];
             winner = model.players['2']['character']['name'];
-            winnerImg = model.players['2']['character']['img']
+            winnerImg = model.players['2']['character']['img'];
             winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
         }
         controller.getQuote(winner, winnerImg, winnerSex);
