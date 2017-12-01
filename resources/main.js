@@ -219,6 +219,7 @@ function View(model){
   //all of our functions for updating the view will go here
 
     this.showEndgameWinner = function() {
+        clearInterval(model.roundTimer);
         var winner;
         var winnerImg;
 
