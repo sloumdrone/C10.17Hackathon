@@ -34,22 +34,19 @@ function addClickHandlers(game, view, controller){
         }
     });
 
-
     $('.questionModal').on('click', '.answer', function(){
-        controller.selectAnswer(this, view)
+        controller.selectAnswer(this, view);
     });
 
     $('.playAgain').click(function(){
       location.reload();
-    })
-
+    });
 
     $('.readyButton').on('click',function(){
         controller.questionBank(game.questions);
         game.roundTime=60;
         view.renderTimer();
         $('.readyBanner').fadeOut();
-
         $('.questionModal').addClass('questionModalShow');
     });
 }
@@ -81,14 +78,6 @@ function GameModel(){
         view = viewer;
         delete this.setView;
     };
-
-    this.backgrounds = [
-      'sewers.gif',
-      'water-fall.gif',
-      'wood-ruins.gif',
-      'mansion.gif',
-      'over-pass.gif'
-    ];
 
     this.availableCharacters = {
         'deadpool' : {
