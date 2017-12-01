@@ -341,6 +341,7 @@ function View(model){
                 var characterImg = $(event.target).attr('id');
                 if (model.turn === 1) {
                     $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.characterNameLeft').text(model.availableCharacters[characterImg].name);
                     $('.infoHeaderName').text('Real Name: ');
                     $('#realNameLeft').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                     $('.infoHeaderPower').text('Power: ');
@@ -349,6 +350,7 @@ function View(model){
                     $('#occupationLeft').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 } else {
                     $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
+                    $('.characterNameRight').text(model.availableCharacters[characterImg].name);
                     $('.infoHeaderName').text('Real Name: ');
                     $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
                     $('.infoHeaderPower').text('Power: ');
