@@ -1,24 +1,24 @@
 $(document).ready(initialize);
 
-
+var game;
+var view;
+var controller;
 function initialize(){
-    var game = new GameModel();
-    var view = new View(game);
-    var controller = new Controller(game);
-    game.setController(controller);
-    game.setView(view);
-    view.setController(controller);
-    controller.setView(view);
-    controller.buildQuestionShoe();
-    addClickHandlers(game, view,controller);
-    view.handleAvatarHover();
-    controller.buildCharacterInfo();
+    game = new GameModel();
+    // game.setController(controller);
+    // game.setView(view);
+    // view.setController(controller);
+    // controller.setView(view);
+    game.controller.getSessionToken();
+    addClickHandlers();
+    game.view.handleAvatarHover();
+    game.controller.buildCharacterInfo();
     $('.gameBoard').css('background-image','url("./resources/images/backgrounds/' + game.gameBoardBackgrounds[Math.floor(Math.random()*game.gameBoardBackgrounds.length)] + '")');
     console.log('Round timer: ' + game.roundTimer,'round time: ' + game.roundTime, 'HTML timer text:' + $('.timer').text());
 }
 
 
-function addClickHandlers(game, view, controller){
+function addClickHandlers(){
     $('.playerAvatar').click(function(){
         if (game.avatarClickable){
             if (game.turn === 1){
@@ -30,12 +30,12 @@ function addClickHandlers(game, view, controller){
             }
             var characterSelection = $(event.target).attr('id');
             game.addPlayer(characterSelection);
-            view.addOutlineToSelectedPlayer();
+            game.view.addOutlineToSelectedPlayer();
         }
     });
 
     $('.questionModal').on('click', '.answer', function(){
-        controller.selectAnswer(this, view);
+        game.controller.selectAnswer(this, view);
     });
 
     $('.playAgain').click(function(){
@@ -43,9 +43,9 @@ function addClickHandlers(game, view, controller){
     });
 
     $('.readyButton').on('click',function(){
-        controller.questionBank(game.questions);
+        game.controller.questionBank(game.questions);
         game.roundTime=60;
-        view.renderTimer();
+        game.view.renderTimer();
         $('.readyBanner').fadeOut();
         $('.questionModal').addClass('questionModalShow');
     });
@@ -53,6 +53,9 @@ function addClickHandlers(game, view, controller){
 
 
 function GameModel(){
+    this.view = new View();
+    this.controller = new Controller();
+    this.token = null;
     this.gameState = 'playerSelection'; //playerSelection, loading, trivia, ready, endgame
     this.avatarClickable = true;
     this.playButtonClickable = false;
@@ -68,16 +71,16 @@ function GameModel(){
         //2 : Player {}
         //built using the add
     };
-    var controller = null;
-    this.setController = function(control){
-        controller = control;
-        delete this.setController;
-    };
-    var view = null;
-    this.setView = function(viewer){
-        view = viewer;
-        delete this.setView;
-    };
+    // var controller = null; commented out for test 2.0
+    // this.setController = function(control){
+    //     controller = control;
+    //     delete this.setController;
+    // };
+    // // var view = null;commented out for test 2.0
+    // this.setView = function(viewer){
+    //     view = viewer;
+    //     delete this.setView;
+    // };
 
     this.availableCharacters = {
         'deadpool' : {
@@ -188,7 +191,7 @@ function GameModel(){
         } else {
             this.gameState = 'loading';
             this.avatarClickable = false;
-            view.activePlayButton();
+            game.view.activePlayButton();
             this.bothPlayersSelected = true;
             //display loading screen
             //gather trivia questions based on characters
@@ -209,50 +212,62 @@ function Player(characterSelection, game){
 
 }
 
-function View(model){
+function View(){
   //all of our functions for updating the view will go here
 
     this.showEndgameWinner = function() {
-        clearInterval(model.roundTimer);
+        clearInterval(game.roundTimer);
         $('.readyButton span').text('P1');
         var winner;
         var winnerImg;
 
-        if (model.players['1']['hitPoints'] > 0) {
-            // winner = model.players['1']['name'];
-            winner = model.players['1']['character']['name'];
-            winnerImg = model.players['1']['character']['img']
-            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
+        if (game.players['1']['hitPoints'] > 0) {
+            // winner = game.players['1']['name'];
+            winner = game.players['1']['character']['name'];
+            winnerImg = game.players['1']['character']['img']
+            winnerSex = game.players[1]['character']['characterInfo']['appearance']['gender'];
         } else {
-            // winner = model.players['2']['name'];
-            winner = model.players['2']['character']['name'];
-            winnerImg = model.players['2']['character']['img']
-            winnerSex = model.players[1]['character']['characterInfo']['appearance']['gender'];
+            // winner = game.players['2']['name'];
+            winner = game.players['2']['character']['name'];
+            winnerImg = game.players['2']['character']['img']
+            winnerSex = game.players[2]['character']['characterInfo']['appearance']['gender'];
         }
 
-        controller.getQuote(winner, winnerImg, winnerSex);
+        game.controller.getQuote(winner, winnerImg, winnerSex);
 
         $('.gameBoard').fadeOut(1500);
         $('.winnerModal').fadeIn(1500);
 
     };
 
-    var controller=null;
-    this.setController = function(control){
-        controller = control;
-        delete this.setController;
-    };
+    // var controller=null;
+    // this.setController = function(control){
+    //     controller = control;
+    //     delete this.setController;
+    // };
 
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         $('.answer').remove();
+        if(game.questionBank.length===0){
+            $('.questionModal').removeClass('questionModalShow');
+            clearInterval(game.roundTimer);
+            //wincheckstate & player change
+            if(game.turn===1){
+                $('.readyButton span').text('P2')
+            }else{
+                $('.readyButton span').text('P1')
+            }
+            game.controller.checkWinState();
+            return;
+        }
         var entry = qArray.shift();
         var category = entry.category;
-        var question = controller.domParser(entry.question);//parses html entities from api string
+        var question = game.controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
-        // model.questionsLeft--;
+        // game.questionsLeft--;
         var catSpan = $('<span>',{
             text: category,
             'class': 'category'
@@ -261,24 +276,15 @@ function View(model){
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        if(model.questionBank.length===0){
-            $('.questionModal').removeClass('questionModalShow');
-            clearInterval(model.roundTimer);
-            //wincheckstate & player change
-            if(model.turn===1){
-                $('.readyButton span').text('P2')
-            }else{
-                $('.readyButton span').text('P1')
-            }
-            controller.checkWinState();
-        }
+        console.log('before if statement qbank len ', game.questionBank.length);
+        console.log('after if statement qbank len ', game.questionBank.length);
     };
 
     this.createAnsDiv=function(num,text, entry){
         var ansDiv= $('<div>',{
             id: 'q'+num,
             'class': 'answer',
-            text: controller.domParser(text)
+            text: game.controller.domParser(text)
         });
         ansDiv[0].difficulty = entry.difficulty;
         ansDiv[0].category = entry.category;
@@ -291,7 +297,7 @@ function View(model){
     };
 
     this.renderDmg = function(amount){
-        if(model.turn === 1){
+        if(game.turn === 1){
             currentHpBar = $('.right');
 
         }else{
@@ -306,52 +312,52 @@ function View(model){
 
     this.activePlayButton = function(){
 
-        model.playButtonClickable = true;
+        game.playButtonClickable = true;
         $('.playButton').click(function(){
-            if(model.playButtonClickable) {
-              model.playButtonClickable = false;
-              model.avatarClickable = false;
-              model.turn = 1;
+            if(game.playButtonClickable) {
+              game.playButtonClickable = false;
+              game.avatarClickable = false;
+              game.turn = 1;
 
 
               $('.modalContainer').hide();
-              $('#p1name').text(model.players[1].character.name);
-              $('#p2name').text(model.players[2].character.name);
+              $('#p1name').text(game.players[1].character.name);
+              $('#p2name').text(game.players[2].character.name);
               $('.gameBoard').show();
               $('.readyBanner').show('slow');
 
               // add function that triggers game start/load screen
             }
         });
-        this.renderHeroInArena(model.players);
+        this.renderHeroInArena(game.players);
     };
 
     this.handleAvatarHover = function (){
         $('.playerAvatar').hover(function () {
-            if (model.bothPlayersSelected === false) {
+            if (game.bothPlayersSelected === false) {
                 var characterImg = $(event.target).attr('id');
-                if (model.turn === 1) {
-                    $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
-                    $('.characterNameLeft').text(model.availableCharacters[characterImg].name);
+                if (game.turn === 1) {
+                    $('.playerContainerLeft').css('background-image', "url('resources/images/characters/" + game.availableCharacters[characterImg].img + "')");
+                    $('.characterNameLeft').text(game.availableCharacters[characterImg].name);
                     $('.infoHeaderName').text('Real Name: ');
-                    $('#realNameLeft').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                    $('#realNameLeft').text(game.availableCharacters[characterImg].characterInfo.biography['full-name']);
                     $('.infoHeaderPower').text('Power: ');
-                    $('#categoryIDLeft').text(model.availableCharacters[characterImg].category);
+                    $('#categoryIDLeft').text(game.availableCharacters[characterImg].category);
                     $('.infoHeaderOccupation').text('Occupation: ');
-                    $('#occupationLeft').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
+                    $('#occupationLeft').text(game.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 } else {
-                    $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + model.availableCharacters[characterImg].img + "')");
-                    $('.characterNameRight').text(model.availableCharacters[characterImg].name);
+                    $('.playerContainerRight').css('background-image', "url('resources/images/characters/" + game.availableCharacters[characterImg].img + "')");
+                    $('.characterNameRight').text(game.availableCharacters[characterImg].name);
                     $('.infoHeaderNameRight').text('Real Name: ');
-                    $('#realNameRight').text(model.availableCharacters[characterImg].characterInfo.biography['full-name']);
+                    $('#realNameRight').text(game.availableCharacters[characterImg].characterInfo.biography['full-name']);
                     $('.infoHeaderPowerRight').text('Power: ');
-                    $('#categoryIDRight').text(model.availableCharacters[characterImg].category);
+                    $('#categoryIDRight').text(game.availableCharacters[characterImg].category);
                     $('.infoHeaderOccupationRight').text('Occupation: ');
-                    $('#occupationRight').text(model.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
+                    $('#occupationRight').text(game.availableCharacters[characterImg].characterInfo.work.occupation.split(',')[0]);
                 }
             }
         }, function () {
-            if (model.turn === 1) {
+            if (game.turn === 1) {
                 $('.playerContainerLeft').removeClass('playerPhotoLeft');
             } else {
                 $('.playerContainerRight').removeClass('playerPhotoRight');
@@ -365,13 +371,13 @@ function View(model){
     };
 
     this.renderTimer = function(){   // renders the timer for each player
-        model.roundTimer  = setInterval(function() {
-            model.roundTime--;
-            $('.currentTime').text(model.roundTime);
-            if(model.roundTime===0){
+        game.roundTimer  = setInterval(function() {
+            game.roundTime--;
+            $('.currentTime').text(game.roundTime);
+            if(game.roundTime===0){
                 $('.questionModal').removeClass('questionModalShow');
-                clearInterval(model.roundTimer);
-                if(model.turn===1){
+                clearInterval(game.roundTimer);
+                if(game.turn===1){
                     $('.readyButton span').text('P2')
                 }else{
                     $('.readyButton span').text('P1')
@@ -384,7 +390,7 @@ function View(model){
 }
 
 
-function Controller(model,view){
+function Controller(){
 
     this.questionBank = function(questionsObj){
         var qBank = [];
@@ -410,23 +416,25 @@ function Controller(model,view){
                     qBank.push(qA)
                 }
             }
-        model.questionBank = qBank;
-        view.renderQuestion(model.questionBank);
+        game.questionBank = qBank;
+        console.log('at qbank function qbank len ', game.questionBank.length);
+        game.view.renderQuestion(game.questionBank);
+
     };
 
 
   this.dealDamage = function(amount){
-    model.turn === 1
-    ? model.players[model.turn + 1]['hitPoints'] -= amount
-    : model.players[model.turn - 1]['hitPoints'] -= amount;
+    game.turn === 1
+    ? game.players[game.turn + 1]['hitPoints'] -= amount
+    : game.players[game.turn - 1]['hitPoints'] -= amount;
     var hpTarget= null;
-    if(model.turn===1){
-        hpTarget = model.players[2]['hitPoints']
+    if(game.turn===1){
+        hpTarget = game.players[2]['hitPoints']
     }else{
-        hpTarget = model.players[1]['hitPoints']
+        hpTarget = game.players[1]['hitPoints']
     }
-    view.renderDmg(hpTarget);
-    if(model.questionBank===0 || model.players['1']['hitPoints']<=0 ||  model.players['2']['hitPoints']<=0){
+    game.view.renderDmg(hpTarget);
+    if(game.questionBank===0 || game.players['1']['hitPoints']<=0 ||  game.players['2']['hitPoints']<=0){
         this.checkWinState();
     }
 
@@ -451,11 +459,11 @@ function Controller(model,view){
       return damagePercent
   };
 
-    var view = null;
-    this.setView = function (viewer) {
-        view = viewer;
-        delete this.setView;
-    };
+    // var view = null;
+    // this.setView = function (viewer) {
+    //     view = viewer;
+    //     delete this.setView;
+    // };
 
 
   this.getSessionToken = function(){  //avoids receiving same question w/in 6 hour period
@@ -468,7 +476,8 @@ function Controller(model,view){
           },
           success: function(data){
              if(data.response_code ===0 ){
-                model.token = data.token;
+                game.token = data.token;
+                game.controller.buildQuestionShoe();
              }else{
                  console.error('server response'+ data.response_code +" "+data.response_message);
              }
@@ -480,27 +489,27 @@ function Controller(model,view){
   };
 
   this.checkWinState = function() {
-      if(model.questions['easy'].length<10 ||model.questions['medium'].length<10 ||model.questions['hard'].length<10){
-          if(model.players[1].hitPoints>model.players[2]){
-              model.gameState = 'endgame';
-              model.players[2].hitPoints=0;
-              view.showEndgameWinner()
-          }else{
-              model.players[1].hitPoints=0;
-              view.showEndgameWinner()
-          }
-      }
-      if (model.players['1']['hitPoints'] <= 0 || model.players['2']['hitPoints'] <= 0) {
-          model.gameState = 'endgame';
-          view.showEndgameWinner();
+      // if(game.questions['easy'].length<10 ||game.questions['medium'].length<10 ||game.questions['hard'].length<10){
+      //     if(game.players[1].hitPoints>game.players[2]){
+      //         game.gameState = 'endgame';
+      //         game.players[2].hitPoints=0;
+      //         game.view.showEndgameWinner()
+      //     }else{
+      //         game.players[1].hitPoints=0;
+      //         game.view.showEndgameWinner()
+      //     }
+      // }
+      if (game.players['1']['hitPoints'] <= 0 || game.players['2']['hitPoints'] <= 0) {
+          game.gameState = 'endgame';
+          game.view.showEndgameWinner();
       } else {
-          if (model.turn === 1) {
-              model.turn += 1;
+          if (game.turn === 1) {
+              game.turn += 1;
           } else {
-              model.turn -= 1;
+              game.turn -= 1;
           }
           $('.readyBanner').slideDown('slow');
-          this.questionBank(model.questions)
+          this.questionBank(game.questions)
       }
   };
 
@@ -512,12 +521,12 @@ function Controller(model,view){
                   'amount': 50,
                   difficulty: diff,
                   type: 'multiple',
-                  token: model.token
+                  token: game.token
               },
               url: 'https://opentdb.com/api.php',
               success: function (data) {
                   if (data.response_code === 0) {
-                      model.questions[diff] = data.results;
+                      game.questions[diff] = data.results;
                   } else {
                       alert('Issue with question retrieval. Response code: ' + data.response_code);
                   }
@@ -543,16 +552,16 @@ function Controller(model,view){
             url: 'http://danielpaschal.com/lfzproxy.php',
             dataType: 'json',
             data: {
-              url: 'http://superheroapi.com/api/10159579732380612/'+ model.availableCharacters[character].heroID,
+              url: 'http://superheroapi.com/api/10159579732380612/'+ game.availableCharacters[character].heroID,
               color: 'lavender'
             },
             success: function (data) {
-                model.apiResponse++
-                console.log(model.apiResponse);
-                $('.loadingBar').css('width', model.apiResponse * 7.5 + 17.5 + '%');
-                model.availableCharacters[character].characterInfo = data;
+                game.apiResponse++
+                console.log(game.apiResponse);
+                $('.loadingBar').css('width', game.apiResponse * 7.5 + 17.5 + '%');
+                game.availableCharacters[character].characterInfo = data;
 
-                if (model.apiResponse >= 12){
+                if (game.apiResponse >= 12){
                   $('.modalContainer').show( 1 );
                   $('.loadScreen').hide( 1 );
                 }
@@ -565,13 +574,13 @@ function Controller(model,view){
     };
 
     this.buildCharacterInfo = function() {
-        for (var character in model.availableCharacters) {
+        for (var character in game.availableCharacters) {
             this.getCharacterInfo(character);
         }
     };
 
     this.getQuote = function(winner, winnerImg, winnerSex) {
-        var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"]
+        var categories = ["dev","movie","food","celebrity","science","political","sport","animal","music","history","travel","career","money","fashion"];
         var randomNum = Math.floor(Math.random() * categories.length);
         var randomCategory = categories[randomNum];
 
@@ -627,14 +636,16 @@ function Controller(model,view){
 
       this.selectAnswer = function (element) {
           var specialty = false;
+          console.log('at select answer qbank len ', game.questionBank.length);
 
           if (element.answer === 'correct') {
-              if (element.category === model.players[model.turn].character.category) {
+              if (element.category === game.players[game.turn].character.category) {
                   specialty = true;
               }
               this.dealDamage(this.dmgCalculator(element.difficulty, specialty));
           }
-          view.renderQuestion(model.questionBank);
+
+          game.view.renderQuestion(game.questionBank);
       };
       this.domParser = function (input) {
           var doc = new DOMParser().parseFromString(input, "text/html");
