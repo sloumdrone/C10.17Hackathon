@@ -39,7 +39,8 @@ function addClickHandlers(){
     });
 
     $('.playAgain').click(function(){
-      location.reload();
+        // location.reload();
+        initialize();
     });
 
     $('.readyButton').on('click',function(){
@@ -261,7 +262,7 @@ function View(){
             return;
         }
         var entry = qArray.shift();
-        var category = entry.category;
+        var difficulty = entry.difficulty.charAt(0).toUpperCase() + entry.difficulty.slice(1);
         var question = game.controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
@@ -269,15 +270,13 @@ function View(){
         ansList.splice(randomNum,0, correctAns);
         // game.questionsLeft--;
         var catSpan = $('<span>',{
-            text: category,
+            text: difficulty +": "+ entry.category,
             'class': 'category'
         });
         $('.questionContainer p').text(question).append(catSpan);
         for(var ans_i=0;ans_i<ansList.length;ans_i++){
             this.createAnsDiv(ans_i,ansList[ans_i], entry);
         }
-        console.log('before if statement qbank len ', game.questionBank.length);
-        console.log('after if statement qbank len ', game.questionBank.length);
     };
 
     this.createAnsDiv=function(num,text, entry){
@@ -378,8 +377,10 @@ function View(){
                 $('.questionModal').removeClass('questionModalShow');
                 clearInterval(game.roundTimer);
                 if(game.turn===1){
+                    game.turn=2;
                     $('.readyButton span').text('P2')
                 }else{
+                    game.turn=1;
                     $('.readyButton span').text('P1')
                 }
                 $('.readyBanner').show();
@@ -417,7 +418,6 @@ function Controller(){
                 }
             }
         game.questionBank = qBank;
-        console.log('at qbank function qbank len ', game.questionBank.length);
         game.view.renderQuestion(game.questionBank);
 
     };
@@ -447,10 +447,10 @@ function Controller(){
       }
       switch (difficulty){
           case 'easy':
-              damagePercent+=14;
+              damagePercent+=10;
               break;
           case 'medium':
-              damagePercent+=17;
+              damagePercent+=15;
               break;
           case 'hard':
               damagePercent+=20;
@@ -620,8 +620,7 @@ function Controller(){
                 var findTheName = winner;
                 var replaceAllName = new RegExp(findTheName, 'g');
                 var greenTxt = winnerQuote.replace(replaceAllName, winner.fontcolor('limegreen'));
-                console.log(winner);
-                console.log('winnerQuote', winnerQuote);
+
                 // var greenTxt = winnerQuote.replace(winner, winner.fontcolor('limegreen'));//makes font tag to change color of the name
 
 
@@ -636,7 +635,6 @@ function Controller(){
 
       this.selectAnswer = function (element) {
           var specialty = false;
-          console.log('at select answer qbank len ', game.questionBank.length);
 
           if (element.answer === 'correct') {
               if (element.category === game.players[game.turn].character.category) {
