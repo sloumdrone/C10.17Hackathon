@@ -686,6 +686,7 @@ function Controller(){
           $('.infoHeaderNameRight').text('');
           $('#realNameRight').text('');
           $('.infoHeaderPowerRight').text('');
+
           $('#categoryIDRight').text('');
           $('.infoHeaderOccupationRight').text('');
           $('#occupationRight').text('');
