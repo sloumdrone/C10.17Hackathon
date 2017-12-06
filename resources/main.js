@@ -40,10 +40,16 @@ function addClickHandlers(){
 
     $('.playAgain').click(function(){
         // location.reload();
+        clearInterval(game.roundTimer);
+        $('.hitPoints').css('width','100%');
+        $('.emptyMe').removeClass('characterName');
+        $('.playerAvatar').removeClass('playerAvatarClicked');
+        $('.modalContainer').fadeIn();
         initialize();
     });
 
     $('.readyButton').on('click',function(){
+        clearInterval(game.roundTimer);
         game.controller.questionBank(game.questions);
         game.roundTime=60;
         game.view.renderTimer();
@@ -204,7 +210,6 @@ function GameModel(){
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
     this.character = game.availableCharacters[characterSelection];
-    this.trivia = {}; //object of arrays of objects
     this.getWinQuote = function(characterName){
         //calls chuck norris api
         //replaces chuck norris with character characterName
@@ -397,10 +402,6 @@ function Controller(){
         var qBank = [];
         for(key in questionsObj){
             // for(var main_i = 0;main_i<questionsArrMain.length;main_i++){
-            if(questionsObj[key].length<10){
-                this.checkWinState(questionsObj[key]);
-                return;
-            }
                 var maxQ = 3;
                 if(key==='easy'){
                     maxQ=4
@@ -488,21 +489,25 @@ function Controller(){
       });
   };
 
+  // this.questionExhaust = function(){
+  //     if(game.players[1].hitPoints>game.players[2].hitPoints){
+  //         game.gameState = 'endgame';
+  //         game.players[2].hitPoints=0;
+  //         game.view.showEndgameWinner()
+  //     }else{
+  //         game.players[1].hitPoints=0;
+  //         game.view.showEndgameWinner()
+  //     }
+  //     clearInterval(game.roundTimer);
+  //     $('.readyBanner span').text('P1')
+  // };
+
   this.checkWinState = function() {
-      // if(game.questions['easy'].length<10 ||game.questions['medium'].length<10 ||game.questions['hard'].length<10){
-      //     if(game.players[1].hitPoints>game.players[2]){
-      //         game.gameState = 'endgame';
-      //         game.players[2].hitPoints=0;
-      //         game.view.showEndgameWinner()
-      //     }else{
-      //         game.players[1].hitPoints=0;
-      //         game.view.showEndgameWinner()
-      //     }
-      // }
+
       if (game.players['1']['hitPoints'] <= 0 || game.players['2']['hitPoints'] <= 0) {
           game.gameState = 'endgame';
           game.view.showEndgameWinner();
-      } else {
+      }else{
           if (game.turn === 1) {
               game.turn += 1;
           } else {
@@ -511,6 +516,7 @@ function Controller(){
           $('.readyBanner').slideDown('slow');
           this.questionBank(game.questions)
       }
+
   };
 
       this.retrieveQuestions = function (diff) {
@@ -556,7 +562,7 @@ function Controller(){
               color: 'lavender'
             },
             success: function (data) {
-                game.apiResponse++
+                game.apiResponse++;
                 console.log(game.apiResponse);
                 $('.loadingBar').css('width', game.apiResponse * 7.5 + 17.5 + '%');
                 game.availableCharacters[character].characterInfo = data;
