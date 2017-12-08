@@ -1,14 +1,9 @@
 $(document).ready(initialize);
 
 var game;
-var view;
-var controller;
+
 function initialize(){
     game = new GameModel();
-    // game.setController(controller);
-    // game.setView(view);
-    // view.setController(controller);
-    // controller.setView(view);
     game.controller.getSessionToken();
     addClickHandlers();
     game.view.handleAvatarHover();
@@ -35,17 +30,13 @@ function addClickHandlers(){
     });
 
     $('.questionModal').on('click', '.answer', function(){
-        game.controller.selectAnswer(this, view);
+        game.controller.selectAnswer(this);
     });
 
     $('.playAgain').click(function(){
-        // location.reload();
-        clearInterval(game.roundTimer);
-        $('.hitPoints').css('width','100%');
-        $('.emptyMe').removeClass('characterName');
-        $('.playerAvatar').removeClass('playerAvatarClicked');
-        $('.modalContainer').fadeIn();
-        initialize();
+        game.controller.newGame();
+        $('.loadScreen').hide();
+        $('.modalContainer').show();
     });
 
     $('.readyButton').on('click',function(){
@@ -62,14 +53,14 @@ function addClickHandlers(){
 function GameModel(){
     this.view = new View();
     this.controller = new Controller();
+    // this.gameState = this.states.gameStart; //playerSelection, trivia, ready, endgame
     this.token = null;
-    this.gameState = 'playerSelection'; //playerSelection, loading, trivia, ready, endgame
     this.avatarClickable = true;
     this.playButtonClickable = false;
     this.bothPlayersSelected = false;
     this.turn = 1;
     this.roundTime = 60; //just a starting number, tracks amount of time left in round;
-    // this.questionsLeft = 10; //tracks the number of questions asked
+    // // this.questionsLeft = 10; //tracks the number of questions asked
     this.roundTimer = null;
     this.apiResponse = 0;
     this.questions = {};
@@ -78,16 +69,6 @@ function GameModel(){
         //2 : Player {}
         //built using the add
     };
-    // var controller = null; commented out for test 2.0
-    // this.setController = function(control){
-    //     controller = control;
-    //     delete this.setController;
-    // };
-    // // var view = null;commented out for test 2.0
-    // this.setView = function(viewer){
-    //     view = viewer;
-    //     delete this.setView;
-    // };
 
     this.availableCharacters = {
         'deadpool' : {
@@ -196,13 +177,9 @@ function GameModel(){
         if (this.turn === 1){
             this.turn = 2;
         } else {
-            this.gameState = 'loading';
             this.avatarClickable = false;
             game.view.activePlayButton();
             this.bothPlayersSelected = true;
-            //display loading screen
-            //gather trivia questions based on characters
-            //when done, load function will trigger ready state
         }
     }
 }
@@ -210,11 +187,6 @@ function GameModel(){
 function Player(characterSelection, game){
     this.hitPoints = 100; //we can do whatever here. 100 is just a starting point.
     this.character = game.availableCharacters[characterSelection];
-    this.getWinQuote = function(characterName){
-        //calls chuck norris api
-        //replaces chuck norris with character characterName
-        //returns info
-    }
 
 }
 
@@ -246,12 +218,6 @@ function View(){
 
     };
 
-    // var controller=null;
-    // this.setController = function(control){
-    //     controller = control;
-    //     delete this.setController;
-    // };
-
     this.renderQuestion = function(qArray){ //renders Question and answers into Arena
         $('.answer').remove();
         if(game.questionBank.length===0){
@@ -271,6 +237,7 @@ function View(){
         var question = game.controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
+        console.log(question);
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
         // game.questionsLeft--;
@@ -460,13 +427,6 @@ function Controller(){
       return damagePercent
   };
 
-    // var view = null;
-    // this.setView = function (viewer) {
-    //     view = viewer;
-    //     delete this.setView;
-    // };
-
-
   this.getSessionToken = function(){  //avoids receiving same question w/in 6 hour period
       $.ajax({
           method: 'GET',
@@ -488,19 +448,6 @@ function Controller(){
           }
       });
   };
-
-  // this.questionExhaust = function(){
-  //     if(game.players[1].hitPoints>game.players[2].hitPoints){
-  //         game.gameState = 'endgame';
-  //         game.players[2].hitPoints=0;
-  //         game.view.showEndgameWinner()
-  //     }else{
-  //         game.players[1].hitPoints=0;
-  //         game.view.showEndgameWinner()
-  //     }
-  //     clearInterval(game.roundTimer);
-  //     $('.readyBanner span').text('P1')
-  // };
 
   this.checkWinState = function() {
 
@@ -651,6 +598,22 @@ function Controller(){
 
           game.view.renderQuestion(game.questionBank);
       };
+
+      this.newGame = function(){ // resets the necessary model properties and dom values to default, deleted players so there won't be any duplicate player objects.
+        this.buildQuestionShoe();
+        this.turn = 1;
+        this.roundTime = 60;
+        this.roundTimer = null;
+        delete game.players[1];
+        delete game.players[2];
+        game.avatarClickable=true;
+        game.bothPlayersSelected=false;
+        $('.chuckNorrisQuote p').empty();
+        $('.hitPoints').css('width','100%');
+        $('.emptyMe').removeClass('characterName');
+        $('.playerAvatar').removeClass('playerAvatarClicked');
+      }
+
       this.domParser = function (input) {
           var doc = new DOMParser().parseFromString(input, "text/html");
           return doc.documentElement.textContent;
