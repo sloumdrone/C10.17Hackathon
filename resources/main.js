@@ -1,7 +1,6 @@
 $(document).ready(initialize);
 
 var game;
-
 function initialize(){
     game = new GameModel();
     game.controller.getSessionToken();
@@ -36,7 +35,7 @@ function addClickHandlers(){
     $('.playAgain').click(function(){
         game.controller.newGame();
         $('.loadScreen').hide();
-        $('.modalContainer').show();
+        $('.modalContainer').fadeIn(2000);
     });
 
     $('.readyButton').on('click',function(){
@@ -237,7 +236,6 @@ function View(){
         var question = game.controller.domParser(entry.question);//parses html entities from api string
         var ansList = entry.incorrect_answers; //array of incorrect answers
         var correctAns = entry.correct_answer;
-        console.log(question);
         var randomNum = Math.floor(Math.random()*4);
         ansList.splice(randomNum,0, correctAns);
         // game.questionsLeft--;
