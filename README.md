@@ -9,6 +9,8 @@ Trivia Fighter is a two player trivia games styled after Street Fighter II and o
   * Stylized play modeled after classic arcade fighting games
   * JavaScript, jQuery, HTML, CSS build for easy deployment and cross-browser support
   
-### Hackathon team members
-  1. Brian Evans ([sloumdrone](http://github.com/sloumdrone))
-    
+### Trivia Fighter: Hackathon team members
+  1. [lmitchell524](https://github.com/lmitchell524)
+  1. [sangwoo89118](https://github.com/sangwoo89118)
+  1. [sicnarfodider](https://github.com/sicnarfodider)
+  1. [sloumdrone](http://github.com/sloumdrone)
